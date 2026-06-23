@@ -142,13 +142,24 @@ const clinicName = clinic.name;
                 <option value="Cancelled">Cancelled</option>
               </select>
             </div>
-            <div class="w-40">
+            <div class="w-44">
               <select class="input-field py-2" id="filter-date">
                 <option value="ALL">All Dates</option>
                 <option value="TODAY">Today</option>
-                <option value="FUTURE">Upcoming</option>
-                <option value="PAST">Past Dates</option>
+                <option value="YESTERDAY">Yesterday</option>
+                <option value="TOMORROW">Tomorrow</option>
+                <option value="THIS_WEEK">This Week</option>
+                <option value="LAST_WEEK">Last Week</option>
+                <option value="THIS_MONTH">This Month</option>
+                <option value="LAST_MONTH">Last Month</option>
+                <option value="CUSTOM">Custom Range...</option>
               </select>
+            </div>
+            <!-- Custom Date Range Picker Container (hidden by default) -->
+            <div id="custom-date-container" class="hidden flex items-center gap-2">
+              <input type="date" id="custom-start-date" class="input-field py-2 text-xs w-32" />
+              <span class="text-xs text-slate-400 font-medium">to</span>
+              <input type="date" id="custom-end-date" class="input-field py-2 text-xs w-32" />
             </div>
           </div>
         </div>
@@ -396,6 +407,9 @@ const clinicName = clinic.name;
       const searchInput = document.getElementById('search-input');
       const filterStatus = document.getElementById('filter-status');
       const filterDate = document.getElementById('filter-date');
+      const customDateContainer = document.getElementById('custom-date-container');
+      const customStartDate = document.getElementById('custom-start-date');
+      const customEndDate = document.getElementById('custom-end-date');
       
       const loadingState = document.getElementById('loading-state');
       const emptyState = document.getElementById('empty-state');
@@ -845,13 +859,73 @@ const clinicName = clinic.name;
         const query = searchInput.value.toLowerCase().trim();
         const statusVal = filterStatus.value;
         const dateVal = filterDate.value;
-        const todayIST = getIndianDateString();
 
-        // Calculate Tomorrow IST
-        const tomorrowDateObj = new Date();
-        const utcTomorrow = tomorrowDateObj.getTime() + (tomorrowDateObj.getTimezoneOffset() * 60000);
-        const istTomorrow = new Date(utcTomorrow + (3600000 * 5.5) + (3600000 * 24));
-        const tomorrowIST = `${istTomorrow.getFullYear()}-${String(istTomorrow.getMonth() + 1).padStart(2, '0')}-${String(istTomorrow.getDate()).padStart(2, '0')}`;
+        // Helpers for IST date boundaries
+        const getISTDate = (offsetDays = 0) => {
+          const now = new Date();
+          const utc = now.getTime() + (now.getTimezoneOffset() * 60000);
+          const ist = new Date(utc + (3600000 * 5.5) + (offsetDays * 86400000));
+          return ist;
+        };
+
+        const formatISTDateString = (dateObj) => {
+          const year = dateObj.getFullYear();
+          const month = String(dateObj.getMonth() + 1).padStart(2, '0');
+          const day = String(dateObj.getDate()).padStart(2, '0');
+          return `${year}-${month}-${day}`;
+        };
+
+        const getISTMonthBoundaries = (offsetMonths = 0) => {
+          const todayIST = getISTDate();
+          const year = todayIST.getFullYear();
+          const month = todayIST.getMonth() + offsetMonths;
+          const start = new Date(year, month, 1);
+          const end = new Date(year, month + 1, 0);
+          return {
+            start: `${start.getFullYear()}-${String(start.getMonth() + 1).padStart(2, '0')}-01`,
+            end: `${end.getFullYear()}-${String(end.getMonth() + 1).padStart(2, '0')}-${String(end.getDate()).padStart(2, '0')}`
+          };
+        };
+
+        let filterStartDate = null;
+        let filterEndDate = null;
+
+        const todayISTDateObj = getISTDate(0);
+        const todayISTStr = formatISTDateString(todayISTDateObj);
+
+        if (dateVal === 'TODAY') {
+          filterStartDate = todayISTStr;
+          filterEndDate = todayISTStr;
+        } else if (dateVal === 'YESTERDAY') {
+          const yesterdayStr = formatISTDateString(getISTDate(-1));
+          filterStartDate = yesterdayStr;
+          filterEndDate = yesterdayStr;
+        } else if (dateVal === 'TOMORROW') {
+          const tomorrowStr = formatISTDateString(getISTDate(1));
+          filterStartDate = tomorrowStr;
+          filterEndDate = tomorrowStr;
+        } else if (dateVal === 'THIS_WEEK') {
+          const dayOfWeek = todayISTDateObj.getDay(); // 0 = Sunday, 1 = Monday, ..., 6 = Saturday
+          const distanceToMonday = dayOfWeek === 0 ? -6 : 1 - dayOfWeek;
+          filterStartDate = formatISTDateString(getISTDate(distanceToMonday));
+          filterEndDate = formatISTDateString(getISTDate(distanceToMonday + 6));
+        } else if (dateVal === 'LAST_WEEK') {
+          const dayOfWeek = todayISTDateObj.getDay();
+          const distanceToMonday = dayOfWeek === 0 ? -6 : 1 - dayOfWeek;
+          filterStartDate = formatISTDateString(getISTDate(distanceToMonday - 7));
+          filterEndDate = formatISTDateString(getISTDate(distanceToMonday - 1));
+        } else if (dateVal === 'THIS_MONTH') {
+          const boundaries = getISTMonthBoundaries(0);
+          filterStartDate = boundaries.start;
+          filterEndDate = boundaries.end;
+        } else if (dateVal === 'LAST_MONTH') {
+          const boundaries = getISTMonthBoundaries(-1);
+          filterStartDate = boundaries.start;
+          filterEndDate = boundaries.end;
+        } else if (dateVal === 'CUSTOM') {
+          filterStartDate = customStartDate.value || null;
+          filterEndDate = customEndDate.value || null;
+        }
 
         const filtered = bookingsData.filter(b => {
           // Status filter
@@ -862,9 +936,10 @@ const clinicName = clinic.name;
 
           // Date filter
           const bookingDate = b.date || '';
-          if (dateVal === 'TODAY' && bookingDate !== todayIST) return false;
-          if (dateVal === 'FUTURE' && bookingDate <= todayIST) return false;
-          if (dateVal === 'PAST' && bookingDate >= todayIST) return false;
+          if (dateVal !== 'ALL') {
+            if (filterStartDate && bookingDate < filterStartDate) return false;
+            if (filterEndDate && bookingDate > filterEndDate) return false;
+          }
 
           // Search query matching
           if (query) {
@@ -1185,7 +1260,19 @@ const clinicName = clinic.name;
       // Filter change listeners
       searchInput.addEventListener('input', applyFilters);
       filterStatus.addEventListener('change', applyFilters);
-      filterDate.addEventListener('change', applyFilters);
+      filterDate.addEventListener('change', () => {
+        if (filterDate.value === 'CUSTOM') {
+          customDateContainer.classList.remove('hidden');
+        } else {
+          customDateContainer.classList.add('hidden');
+          customStartDate.value = '';
+          customEndDate.value = '';
+        }
+        applyFilters();
+      });
+
+      customStartDate.addEventListener('change', applyFilters);
+      customEndDate.addEventListener('change', applyFilters);
 
       // Check on startup
       checkAccess();
