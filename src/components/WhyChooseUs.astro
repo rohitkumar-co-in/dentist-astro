@@ -1,0 +1,145 @@
+---
+import { clinic } from '../lib/site';
+import Icon from './Icon.astro';
+
+const iconColors = ['bg-blue-50 text-darkAqua', 'bg-emerald-50 text-emerald-600', 'bg-amber-50 text-amber-600', 'bg-purple-50 text-purple-600'];
+---
+
+<section class="wcu-section section-pad" data-reveal>
+  <div class="page-shell">
+    <!-- Section header -->
+    <div class="wcu-header">
+      <div class="max-w-2xl">
+        <span class="section-kicker">Why choose us</span>
+        <h2 class="section-title mt-4">What makes us different</h2>
+        <p class="section-copy">
+          We're not just another clinic. Here's what our patients tell us matters most — and what we promise to every family.
+        </p>
+      </div>
+    </div>
+
+    <!-- Highlights grid -->
+    <div class="mt-12 grid gap-6 md:grid-cols-2 xl:grid-cols-4">
+      {clinic.highlights.map((item, i) => (
+        <div class={`wcu-card`} style={`--i:${i}`}>
+          <div class={`wcu-icon ${iconColors[i % iconColors.length]}`}>
+            <Icon name={item.icon} size={26} class="h-6 w-6" />
+          </div>
+          <h3 class="wcu-title">{item.title}</h3>
+          <p class="wcu-desc">{item.description}</p>
+          <div class="wcu-card-accent"></div>
+        </div>
+      ))}
+    </div>
+
+    <!-- Payment & hours banner -->
+    <div class="wcu-banner mt-10">
+      <!-- Left stat row -->
+      <div class="wcu-banner-stats">
+        <div class="wcu-banner-stat">
+          <span class="wcu-banner-stat-icon">
+            <Icon name="tag" size={20} class="h-5 w-5" />
+          </span>
+          <div>
+            <p class="font-semibold text-white">UPI, Cards &amp; Cash</p>
+            <p class="text-sm text-white/75">All payment modes accepted</p>
+          </div>
+        </div>
+        <div class="wcu-banner-divider"></div>
+        <div class="wcu-banner-stat">
+          <span class="wcu-banner-stat-icon">
+            <Icon name="clock" size={20} class="h-5 w-5" />
+          </span>
+          <div>
+            <p class="font-semibold text-white">{clinic.openHours[0]} Open</p>
+            <p class="text-sm text-white/75">{clinic.openHours[1]}</p>
+          </div>
+        </div>
+        <div class="wcu-banner-divider"></div>
+        <div class="wcu-banner-stat">
+          <span class="wcu-banner-stat-icon">
+            <Icon name="map-pin" size={20} class="h-5 w-5" />
+          </span>
+          <div>
+            <p class="font-semibold text-white">Easy to reach</p>
+            <p class="text-sm text-white/75">Link Road, {clinic.area}</p>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<style>
+  .wcu-section {
+    background: linear-gradient(180deg, var(--surface) 0%, rgba(202,240,248,0.15) 100%);
+  }
+  .wcu-header {
+    display: flex; align-items: flex-end; justify-content: space-between; gap: 24px;
+  }
+
+  .wcu-card {
+    position: relative; overflow: hidden;
+    padding: 28px 24px;
+    border-radius: 18px; border: 1.5px solid rgba(0,119,182,0.1);
+    background: white;
+    box-shadow: 0 4px 20px rgba(43,45,66,0.05);
+    display: flex; flex-direction: column; gap: 12px;
+    transition: transform 0.3s ease, box-shadow 0.3s ease;
+    animation: wcuFade 0.5s ease both;
+    animation-delay: calc(var(--i, 0) * 80ms);
+  }
+  .wcu-card:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 12px 36px rgba(0,119,182,0.14);
+  }
+  .wcu-card-accent {
+    position: absolute; bottom: 0; left: 0; right: 0;
+    height: 3px;
+    background: linear-gradient(90deg, #0077B6, #00B4D8);
+    transform: scaleX(0); transform-origin: left;
+    transition: transform 0.3s ease;
+  }
+  .wcu-card:hover .wcu-card-accent { transform: scaleX(1); }
+
+  @keyframes wcuFade {
+    from { opacity: 0; transform: translateY(14px); }
+    to { opacity: 1; transform: translateY(0); }
+  }
+
+  .wcu-icon {
+    display: flex; align-items: center; justify-content: center;
+    width: 52px; height: 52px; border-radius: 14px;
+    transition: transform 0.3s;
+  }
+  .wcu-card:hover .wcu-icon { transform: scale(1.1) rotate(-4deg); }
+
+  .wcu-title {
+    font-size: 1.0625rem; font-weight: 700; color: #2B2D42;
+  }
+  .wcu-desc {
+    font-size: 0.875rem; line-height: 1.65; color: rgba(43,45,66,0.65);
+  }
+
+  .wcu-banner {
+    padding: 28px 32px; border-radius: 20px;
+    background: linear-gradient(135deg, #0077B6, #00B4D8);
+    box-shadow: 0 16px 48px rgba(0,119,182,0.28);
+  }
+  .wcu-banner-stats {
+    display: flex; align-items: center; flex-wrap: wrap; gap: 16px;
+  }
+  .wcu-banner-stat {
+    display: flex; align-items: center; gap: 14px; flex: 1; min-width: 180px;
+  }
+  .wcu-banner-stat-icon {
+    display: flex; align-items: center; justify-content: center;
+    width: 40px; height: 40px; border-radius: 10px; flex-shrink: 0;
+    background: rgba(255,255,255,0.15);
+    color: white;
+  }
+  .wcu-banner-divider {
+    width: 1px; height: 48px; background: rgba(255,255,255,0.25);
+    flex-shrink: 0;
+  }
+</style>

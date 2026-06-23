@@ -1,0 +1,105 @@
+---
+import '../styles/global.css';
+import Navbar from '../components/Navbar.astro';
+import Footer from '../components/Footer.astro';
+import { buildWhatsAppLink, clinic } from '../lib/site';
+import Icon from '../components/Icon.astro';
+
+const { title = clinic.title, description = clinic.description } = Astro.props;
+
+const pageUrl = new URL(Astro.url.pathname, Astro.site ?? 'https://aquasmile-dental.example').toString();
+
+const jsonLd = {
+  '@context': 'https://schema.org',
+  '@type': ['Dentist', 'LocalBusiness'],
+  name: clinic.name,
+  description,
+  url: pageUrl,
+  telephone: clinic.phoneDisplay,
+  priceRange: clinic.priceRange,
+  address: {
+    '@type': 'PostalAddress',
+    streetAddress: clinic.address,
+    addressLocality: clinic.area,
+    addressRegion: 'Maharashtra',
+    addressCountry: 'IN',
+  },
+  geo: {
+    '@type': 'GeoCoordinates',
+    latitude: 19.1313,
+    longitude: 72.8298,
+  },
+  openingHoursSpecification: [
+    {
+      '@type': 'OpeningHoursSpecification',
+      dayOfWeek: ['Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday', 'Sunday'],
+      opens: '09:30',
+      closes: '20:30',
+    },
+  ],
+  sameAs: [buildWhatsAppLink('Hi, I would like to book an appointment.')],
+};
+---
+
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <meta name="generator" content={Astro.generator} />
+    <title>{title}</title>
+    <meta name="description" content={description} />
+    <meta name="theme-color" content="#00B4D8" />
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin="anonymous" />
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=Poppins:wght@500;600;700;800&display=swap" rel="stylesheet" />
+    <script type="application/ld+json" set:html={JSON.stringify(jsonLd)} />
+  </head>
+  <body id="top" class="min-h-screen bg-[var(--surface)] text-[var(--text)]">
+    <Navbar />
+    <main class="pb-0 pt-0 sm:pb-0">
+      <slot />
+    </main>
+    <Footer />
+
+    <a
+      href={buildWhatsAppLink("Hi, I'd like to book an appointment.")}
+      class="fixed bottom-6 right-6 z-40 hidden h-14 w-14 items-center justify-center rounded-full bg-[#25D366] text-white shadow-soft transition hover:scale-105 focus:outline-none focus-visible:ring-2 focus-visible:ring-[#25D366] focus-visible:ring-offset-2 lg:flex"
+      aria-label="Chat on WhatsApp"
+      target="_blank"
+      rel="noreferrer"
+    >
+      <Icon name="whatsapp" class="h-7 w-7" size={28} />
+    </a>
+
+    <div class="fixed inset-x-0 bottom-0 z-50 border-t border-[var(--border)] bg-white/95 px-4 py-3 shadow-[0_-10px_30px_rgba(0,0,0,0.06)] backdrop-blur md:hidden">
+      <div class="mx-auto grid max-w-7xl grid-cols-2 gap-3">
+        <a href={clinic.phoneTel} class="action-btn-primary min-h-12 rounded-[14px] text-base">
+          <Icon name="phone" class="h-5 w-5" size={20} />
+          Call Now
+        </a>
+        <a href={buildWhatsAppLink("Hi, I'd like to book an appointment.")} class="action-btn-secondary min-h-12 rounded-[14px] text-base">
+          <Icon name="whatsapp" class="h-5 w-5" size={20} />
+          WhatsApp
+        </a>
+      </div>
+    </div>
+
+    <script is:inline>
+      const revealElements = document.querySelectorAll('[data-reveal]');
+      const observer = new IntersectionObserver((entries) => {
+        entries.forEach((entry) => {
+          if (entry.isIntersecting) {
+            entry.target.classList.add('is-visible');
+            observer.unobserve(entry.target);
+          }
+        });
+      }, { threshold: 0.15 });
+
+      revealElements.forEach((element) => {
+        element.classList.add('reveal');
+        observer.observe(element);
+      });
+    </script>
+  </body>
+</html>

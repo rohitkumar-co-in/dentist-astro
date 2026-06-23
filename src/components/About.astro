@@ -1,0 +1,223 @@
+---
+import { clinic } from '../lib/site';
+---
+
+<section id="about" class="about-section section-pad" data-reveal>
+  <div class="page-shell">
+    <div class="grid gap-14 lg:grid-cols-[1fr_1.2fr] lg:items-center">
+
+      <!-- LEFT: Doctor card -->
+      <div class="about-card-wrap">
+        <div class="about-glow" aria-hidden="true"></div>
+        <div class="about-card">
+          <!-- Top accent bar -->
+          <div class="about-card-bar"></div>
+
+          <!-- Doctor silhouette area -->
+          <div class="about-doctor-visual">
+            <div class="about-doctor-bg">
+              <span class="about-doctor-kicker">Meet your dentist</span>
+              <div class="about-doctor-illustration">
+                <div class="about-doc-circle-outer">
+                  <div class="about-doc-circle-inner">
+                    <svg viewBox="0 0 80 80" fill="none" class="h-16 w-16 text-white/80">
+                      <circle cx="40" cy="28" r="16" fill="currentColor" opacity="0.9"/>
+                      <path d="M10 72c0-16.569 13.431-30 30-30s30 13.431 30 30" fill="currentColor" opacity="0.7"/>
+                    </svg>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <!-- Info block -->
+          <div class="about-card-info">
+            <div class="about-card-info-left">
+              <p class="about-card-name">{clinic.doctorName}</p>
+              <p class="about-card-qual">{clinic.doctorQualifications}</p>
+              <p class="about-card-reg">{clinic.registrationLine}</p>
+            </div>
+            <div class="about-card-badge">
+              <span class="about-card-badge-num">{clinic.yearsInPractice}</span>
+              <span class="about-card-badge-label">yrs</span>
+            </div>
+          </div>
+
+          <!-- Mini stats -->
+          <div class="about-mini-stats">
+            <div class="about-mini-stat">
+              <span class="about-mini-val">{clinic.patientsServed}</span>
+              <span class="about-mini-key">Patients served</span>
+            </div>
+            <div class="about-mini-divider"></div>
+            <div class="about-mini-stat">
+              <span class="about-mini-val">{clinic.googleRating}★</span>
+              <span class="about-mini-key">Google reviews</span>
+            </div>
+            <div class="about-mini-divider"></div>
+            <div class="about-mini-stat">
+              <span class="about-mini-val">{clinic.services.length}</span>
+              <span class="about-mini-key">Specialties</span>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- RIGHT: Text content -->
+      <div>
+        <span class="section-kicker">Who we are</span>
+        <h2 class="section-title mt-4">
+          {clinic.doctorName} built this clinic because {clinic.doctorGender === 'she' ? 'she' : clinic.doctorGender === 'he' ? 'he' : 'they'} hated bad dentistry
+        </h2>
+        <p class="section-copy">
+          {clinic.doctorOriginStory.replace('{name}', clinic.name)}
+        </p>
+
+        <p class="about-para mt-5">
+          {clinic.doctorApproach.replace('{doctorName}', clinic.doctorName)}
+        </p>
+
+        <!-- Feature bullets -->
+        <ul class="about-bullets mt-8">
+          {clinic.trustBullets.map((bullet, i) => {
+            const colors = [
+              'bg-blue-50 text-darkAqua',
+              'bg-emerald-50 text-emerald-600',
+              'bg-amber-50 text-amber-600',
+              'bg-purple-50 text-purple-600',
+            ];
+            return (
+              <li class="about-bullet">
+                <span class={`about-bullet-icon ${colors[i % colors.length]}`}>
+                  <svg class="h-4 w-4" fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"/></svg>
+                </span>
+                <span><strong>{bullet.bold}</strong> {bullet.rest}</span>
+              </li>
+            );
+          })}
+        </ul>
+
+        <!-- Credential cards -->
+        <div class="mt-8 grid gap-4 sm:grid-cols-2">
+          <div class="card-elevated p-5">
+            <p class="text-xs font-semibold uppercase tracking-widest text-darkAqua">Credentials</p>
+            <p class="mt-2 text-base font-semibold text-[var(--text)]">{clinic.doctorQualifications}</p>
+            <p class="mt-1.5 text-sm text-[var(--muted)]">{clinic.registrationLine}</p>
+          </div>
+          <div class="card-elevated p-5">
+            <p class="text-xs font-semibold uppercase tracking-widest text-darkAqua">In Practice</p>
+            <p class="mt-2 text-base font-semibold text-[var(--text)]">{clinic.yearsInPractice} years of experience</p>
+            <p class="mt-1.5 text-sm text-[var(--muted)]">{clinic.practiceNote}</p>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<style>
+  .about-section { background: var(--surface); }
+
+  .about-card-wrap { position: relative; }
+  .about-glow {
+    position: absolute; inset: -20px;
+    background: radial-gradient(ellipse at center, rgba(0,180,216,0.15) 0%, transparent 70%);
+    border-radius: 24px; pointer-events: none;
+  }
+  .about-card {
+    position: relative; z-index: 1;
+    background: white;
+    border-radius: 20px;
+    border: 1px solid rgba(0,119,182,0.12);
+    box-shadow: 0 24px 60px rgba(0,119,182,0.12);
+    overflow: hidden;
+    transition: transform 0.4s ease;
+  }
+  .about-card:hover { transform: translateY(-4px); }
+  .about-card-bar {
+    height: 5px;
+    background: linear-gradient(90deg, #0077B6, #00B4D8, #90E0EF);
+  }
+
+  .about-doctor-visual { padding: 24px 24px 0; }
+  .about-doctor-bg {
+    border-radius: 16px;
+    background: linear-gradient(135deg, #0077B6 0%, #00B4D8 60%, #90E0EF 100%);
+    padding: 24px; min-height: 200px;
+    display: flex; flex-direction: column; gap: 16px;
+    position: relative; overflow: hidden;
+  }
+  .about-doctor-bg::before {
+    content: ''; position: absolute;
+    top: -40px; right: -40px;
+    width: 160px; height: 160px; border-radius: 50%;
+    background: rgba(255,255,255,0.08);
+  }
+  .about-doctor-bg::after {
+    content: ''; position: absolute;
+    bottom: -30px; left: -30px;
+    width: 120px; height: 120px; border-radius: 50%;
+    background: rgba(255,255,255,0.06);
+  }
+  .about-doctor-kicker {
+    display: inline-block;
+    padding: 4px 14px; border-radius: 9999px;
+    background: rgba(255,255,255,0.2); color: white;
+    font-size: 0.75rem; font-weight: 600; letter-spacing: 0.1em; text-transform: uppercase;
+    backdrop-filter: blur(8px);
+  }
+  .about-doctor-illustration {
+    display: flex; justify-content: center; align-items: center; flex: 1;
+    padding: 16px 0;
+  }
+  .about-doc-circle-outer {
+    width: 110px; height: 110px; border-radius: 50%;
+    background: rgba(255,255,255,0.15); border: 2px solid rgba(255,255,255,0.3);
+    display: flex; align-items: center; justify-content: center;
+  }
+  .about-doc-circle-inner {
+    width: 80px; height: 80px; border-radius: 50%;
+    background: rgba(255,255,255,0.2); border: 1px solid rgba(255,255,255,0.4);
+    display: flex; align-items: center; justify-content: center;
+  }
+
+  .about-card-info {
+    display: flex; align-items: center; gap: 12px;
+    padding: 20px 24px 0;
+  }
+  .about-card-info-left { flex: 1; }
+  .about-card-name { font-size: 1.125rem; font-weight: 700; color: #2B2D42; }
+  .about-card-qual { font-size: 0.8125rem; color: #0077B6; font-weight: 600; margin-top: 2px; }
+  .about-card-reg { font-size: 0.75rem; color: rgba(43,45,66,0.5); margin-top: 3px; }
+  .about-card-badge {
+    display: flex; flex-direction: column; align-items: center;
+    width: 56px; height: 56px; border-radius: 16px;
+    background: linear-gradient(135deg, #0077B6, #00B4D8);
+    justify-content: center; flex-shrink: 0;
+  }
+  .about-card-badge-num { font-family: 'Poppins', sans-serif; font-size: 1.25rem; font-weight: 800; color: white; line-height: 1; }
+  .about-card-badge-label { font-size: 0.6875rem; color: rgba(255,255,255,0.8); }
+
+  .about-mini-stats {
+    display: flex; align-items: center;
+    margin: 20px 24px 24px;
+    padding: 16px; border-radius: 14px;
+    background: linear-gradient(135deg, #f7fcfe, #e8fbff);
+    border: 1px solid rgba(0,180,216,0.15);
+  }
+  .about-mini-stat { flex: 1; display: flex; flex-direction: column; align-items: center; gap: 2px; }
+  .about-mini-val { font-family: 'Poppins', sans-serif; font-size: 1.0625rem; font-weight: 700; color: #0077B6; }
+  .about-mini-key { font-size: 0.6875rem; color: rgba(43,45,66,0.55); text-align: center; }
+  .about-mini-divider { width: 1px; height: 32px; background: rgba(0,180,216,0.25); margin: 0 8px; }
+
+  .about-para { font-size: 1rem; line-height: 1.75; color: rgba(43,45,66,0.72); max-width: 36rem; }
+  .about-bullets { list-style: none; padding: 0; margin: 0; display: flex; flex-direction: column; gap: 14px; }
+  .about-bullet {
+    display: flex; align-items: flex-start; gap: 12px;
+    font-size: 0.9375rem; color: rgba(43,45,66,0.8); line-height: 1.6;
+  }
+  .about-bullet-icon {
+    display: flex; align-items: center; justify-content: center;
+    width: 28px; height: 28px; border-radius: 8px; flex-shrink: 0; margin-top: 1px;
+  }
+</style>

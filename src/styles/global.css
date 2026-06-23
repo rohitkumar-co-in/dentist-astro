@@ -1,0 +1,148 @@
+@config "../../tailwind.config.mjs";
+@import "tailwindcss";
+
+:root {
+  --surface: #f7fcfe;
+  --surface-strong: #ffffff;
+  --text: #2b2d42;
+  --muted: rgba(43, 45, 66, 0.72);
+  --border: rgba(0, 119, 182, 0.14);
+}
+
+@layer base {
+  html {
+    scroll-behavior: smooth;
+  }
+
+  body {
+    @apply bg-[var(--surface)] font-sans text-[var(--text)] antialiased;
+  }
+
+  h1,
+  h2,
+  h3,
+  h4,
+  h5,
+  h6 {
+    @apply font-heading tracking-tight text-[var(--text)];
+  }
+
+  ::selection {
+    background: #00b4d8;
+    color: #ffffff;
+  }
+}
+
+@layer components {
+  .page-shell {
+    @apply mx-auto w-full max-w-7xl px-4 sm:px-6 lg:px-8;
+  }
+
+  .section-pad {
+    @apply py-16 sm:py-20 lg:py-24;
+  }
+
+  .section-kicker {
+    @apply inline-flex items-center gap-2 rounded-full border border-[var(--border)] bg-white/80 px-4 py-1 text-xs font-semibold uppercase tracking-[0.2em] text-darkAqua shadow-sm backdrop-blur;
+  }
+
+  .section-title {
+    @apply text-3xl font-semibold sm:text-4xl lg:text-5xl;
+  }
+
+  .section-copy {
+    @apply mt-4 max-w-2xl text-base leading-7 text-[var(--muted)] sm:text-lg;
+  }
+
+  .card-elevated {
+    @apply rounded-[12px] border border-[var(--border)] bg-white shadow-card;
+  }
+
+  .action-btn {
+    @apply inline-flex min-h-11 items-center justify-center gap-2 rounded-[12px] px-5 py-3 font-semibold transition duration-200 ease-out focus:outline-none focus-visible:ring-2 focus-visible:ring-darkAqua focus-visible:ring-offset-2;
+  }
+
+  .action-btn-primary {
+    @apply inline-flex min-h-11 items-center justify-center gap-2 rounded-[12px] px-5 py-3 font-semibold transition duration-200 ease-out focus:outline-none focus-visible:ring-2 focus-visible:ring-darkAqua focus-visible:ring-offset-2 bg-aqua text-white shadow-soft hover:bg-darkAqua;
+  }
+
+  .action-btn-secondary {
+    @apply inline-flex min-h-11 items-center justify-center gap-2 rounded-[12px] px-5 py-3 font-semibold transition duration-200 ease-out focus:outline-none focus-visible:ring-2 focus-visible:ring-darkAqua focus-visible:ring-offset-2 border border-[var(--border)] bg-white text-darkAqua hover:border-darkAqua hover:bg-paleAqua/50;
+  }
+
+  .input-field {
+    @apply w-full rounded-[12px] border border-[var(--border)] bg-white px-4 py-3 text-sm text-[var(--text)] shadow-sm outline-none transition placeholder:text-slate-400 focus:border-darkAqua focus:ring-2 focus:ring-lightAqua/70;
+  }
+
+  .reveal {
+    opacity: 0;
+    transform: translateY(24px);
+    transition: opacity 0.65s cubic-bezier(0.22, 1, 0.36, 1), transform 0.65s cubic-bezier(0.22, 1, 0.36, 1);
+  }
+
+  .reveal.is-visible {
+    opacity: 1;
+    transform: translateY(0);
+  }
+
+  /* Stagger children of a revealed parent */
+  .reveal.is-visible > * {
+    animation-play-state: running;
+  }
+
+  .icon-chip {
+    @apply inline-flex h-11 w-11 flex-shrink-0 items-center justify-center;
+  }
+
+  /* ── Appointment section ── */
+
+  /* Inline stats (no card boxes) */
+  .appt-inline-stat {
+    @apply flex flex-col gap-0.5;
+  }
+  .appt-inline-num {
+    @apply text-xl font-bold text-darkAqua;
+  }
+  .appt-inline-label {
+    @apply text-xs text-[var(--muted)];
+  }
+
+  /* Connected step list */
+  .appt-clean-step {
+    @apply flex gap-5 pb-7 last:pb-0;
+  }
+  .appt-clean-step-left {
+    @apply flex flex-col items-center shrink-0;
+  }
+  .appt-clean-num {
+    @apply flex h-8 w-8 shrink-0 items-center justify-center rounded-full bg-aqua/10 text-sm font-bold text-darkAqua ring-1 ring-aqua/30;
+  }
+  .appt-clean-line {
+    @apply mt-2 w-px flex-1 bg-[var(--border)];
+    min-height: 28px;
+  }
+  .appt-clean-content {
+    @apply pb-2 pt-0.5;
+  }
+
+  /* ── Contact section (list style) ── */
+  .contact-row {
+    @apply flex items-start gap-4 py-4 first:pt-0 last:pb-0;
+  }
+
+  .contact-row-icon {
+    @apply mt-0.5 flex h-8 w-8 shrink-0 items-center justify-center rounded-lg bg-[var(--surface)] text-[var(--muted)] border border-[var(--border)];
+  }
+
+  .contact-row-label {
+    @apply text-xs font-semibold uppercase tracking-widest text-[var(--muted)] mb-0.5;
+  }
+
+  .contact-row-value {
+    @apply text-sm text-[var(--text)] leading-snug;
+  }
+
+  .contact-row-action {
+    @apply mt-1 block text-xs font-semibold text-aqua hover:text-darkAqua transition-colors;
+  }
+}

@@ -1,0 +1,183 @@
+---
+import { clinic, navigationLinks, socialLinks } from '../lib/site';
+import Icon from './Icon.astro';
+
+const currentYear = new Date().getFullYear();
+const quickLinks = navigationLinks.filter(l => l.label !== 'Home');
+const serviceNames = clinic.services.slice(0, 5).map(s => s.name);
+---
+
+<footer class="footer">
+  <!-- Top wave accent -->
+  <div class="footer-wave" aria-hidden="true">
+    <svg viewBox="0 0 1440 60" preserveAspectRatio="none" fill="none" xmlns="http://www.w3.org/2000/svg">
+      <path d="M0 60L60 50C120 40 240 20 360 15C480 10 600 20 720 25C840 30 960 30 1080 25C1200 20 1320 10 1380 5L1440 0V60H0Z" fill="#0e1729"/>
+    </svg>
+  </div>
+
+  <div class="footer-body">
+    <div class="page-shell">
+      <div class="footer-grid">
+
+        <!-- Brand column -->
+        <div class="footer-brand">
+          <a href="#top" class="footer-logo">
+            <span class="footer-logo-icon">AS</span>
+            <div>
+              <p class="footer-logo-name">{clinic.name}</p>
+              <p class="footer-logo-sub">Gentle family dentistry</p>
+            </div>
+          </a>
+          <p class="footer-brand-desc">
+            A small, trusted clinic in {clinic.area} caring for Mumbai families since 2009. Honest care. Real doctors. Fast WhatsApp booking.
+          </p>
+          <!-- Social icons -->
+          <div class="footer-socials">
+            {socialLinks.map((link) => (
+              <a href={link.href} class="footer-social-btn" target="_blank" rel="noreferrer" aria-label={link.label}>
+                <Icon name={link.icon} alt={link.label} size={18} class="h-4.5 w-4.5" />
+              </a>
+            ))}
+          </div>
+        </div>
+
+        <!-- Quick links -->
+        <div class="footer-col">
+          <h3 class="footer-col-heading">Quick Links</h3>
+          <ul class="footer-links">
+            {quickLinks.map((link) => (
+              <li>
+                <a href={link.href} class="footer-link">
+                  <svg class="h-3 w-3" fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M9 18l6-6-6-6"/></svg>
+                  {link.label}
+                </a>
+              </li>
+            ))}
+          </ul>
+        </div>
+
+        <!-- Services -->
+        <div class="footer-col">
+          <h3 class="footer-col-heading">Our Services</h3>
+          <ul class="footer-links">
+            {serviceNames.map((name) => (
+              <li>
+                <a href="#services" class="footer-link">
+                  <svg class="h-3 w-3" fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M9 18l6-6-6-6"/></svg>
+                  {name}
+                </a>
+              </li>
+            ))}
+          </ul>
+        </div>
+
+        <!-- Contact -->
+        <div class="footer-col">
+          <h3 class="footer-col-heading">Contact Us</h3>
+          <ul class="footer-contact-list">
+            <li class="footer-contact-item">
+              <svg class="footer-contact-icon" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z"/><path stroke-linecap="round" stroke-linejoin="round" d="M15 11a3 3 0 11-6 0 3 3 0 016 0z"/></svg>
+              <span>{clinic.address}</span>
+            </li>
+            <li class="footer-contact-item">
+              <svg class="footer-contact-icon" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M3 5a2 2 0 012-2h3.28a1 1 0 01.948.684l1.498 4.493a1 1 0 01-.502 1.21l-2.257 1.13a11.042 11.042 0 005.516 5.516l1.13-2.257a1 1 0 011.21-.502l4.493 1.498a1 1 0 01.684.949V19a2 2 0 01-2 2h-1C9.716 21 3 14.284 3 6V5z"/></svg>
+              <a href={clinic.phoneTel} class="hover:text-aqua transition-colors">{clinic.phoneDisplay}</a>
+            </li>
+            <li class="footer-contact-item">
+              <svg class="footer-contact-icon" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M3 8l7.89 5.26a2 2 0 002.22 0L21 8M5 19h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z"/></svg>
+              <a href={`mailto:${clinic.email}`} class="hover:text-aqua transition-colors">{clinic.email}</a>
+            </li>
+            <li class="footer-contact-item">
+              <svg class="footer-contact-icon" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"/><path stroke-linecap="round" stroke-linejoin="round" d="M12 6v6l4 2"/></svg>
+              <span>{clinic.openHours[0]}, {clinic.openHours[1]}</span>
+            </li>
+          </ul>
+        </div>
+
+      </div>
+    </div>
+  </div>
+
+  <!-- Bottom bar -->
+  <div class="footer-bottom">
+    <div class="page-shell footer-bottom-inner">
+      <p class="text-sm text-slate-500">© {currentYear} {clinic.name}. All rights reserved.</p>
+      <p class="text-xs text-slate-600">{clinic.registrationLine}</p>
+    </div>
+  </div>
+</footer>
+
+<style>
+  .footer { background: #0e1729; color: #cbd5e1; position: relative; }
+
+  .footer-wave {
+    display: block; width: 100%; overflow: hidden; line-height: 0;
+    margin-top: -2px;
+  }
+  .footer-wave svg { display: block; width: 100%; height: 60px; }
+
+  .footer-body { padding: 60px 0 48px; }
+
+  .footer-grid {
+    display: grid; gap: 48px;
+    grid-template-columns: 1fr;
+  }
+  @media (min-width: 640px) {
+    .footer-grid { grid-template-columns: repeat(2, 1fr); }
+  }
+  @media (min-width: 1024px) {
+    .footer-grid { grid-template-columns: 1.6fr 1fr 1fr 1.3fr; gap: 40px; }
+  }
+
+  .footer-brand { display: flex; flex-direction: column; gap: 16px; }
+  .footer-logo {
+    display: inline-flex; align-items: center; gap: 12px; text-decoration: none;
+  }
+  .footer-logo-icon {
+    display: flex; align-items: center; justify-content: center;
+    width: 44px; height: 44px; border-radius: 14px;
+    background: linear-gradient(135deg, #0077B6, #00B4D8);
+    font-family: 'Poppins', sans-serif; font-size: 1.125rem; font-weight: 800; color: white;
+    flex-shrink: 0;
+  }
+  .footer-logo-name { font-family: 'Poppins', sans-serif; font-size: 1.0625rem; font-weight: 700; color: white; }
+  .footer-logo-sub { font-size: 0.75rem; color: #94a3b8; margin-top: 1px; }
+  .footer-brand-desc { font-size: 0.875rem; line-height: 1.75; color: #94a3b8; max-width: 280px; }
+  .footer-socials { display: flex; gap: 10px; margin-top: 4px; }
+  .footer-social-btn {
+    display: flex; align-items: center; justify-content: center;
+    width: 38px; height: 38px; border-radius: 10px;
+    background: rgba(255,255,255,0.07); border: 1px solid rgba(255,255,255,0.1);
+    transition: background 0.2s, transform 0.2s;
+  }
+  .footer-social-btn:hover { background: rgba(0,180,216,0.2); transform: translateY(-2px); }
+
+  .footer-col { display: flex; flex-direction: column; gap: 16px; }
+  .footer-col-heading {
+    font-size: 0.75rem; font-weight: 700; letter-spacing: 0.12em; text-transform: uppercase;
+    color: white; padding-bottom: 8px;
+    border-bottom: 1px solid rgba(255,255,255,0.08);
+  }
+  .footer-links { list-style: none; padding: 0; margin: 0; display: flex; flex-direction: column; gap: 10px; }
+  .footer-link {
+    display: inline-flex; align-items: center; gap: 6px;
+    font-size: 0.875rem; color: #94a3b8;
+    transition: color 0.2s, gap 0.2s; text-decoration: none;
+  }
+  .footer-link:hover { color: #00B4D8; gap: 10px; }
+
+  .footer-contact-list { list-style: none; padding: 0; margin: 0; display: flex; flex-direction: column; gap: 12px; }
+  .footer-contact-item {
+    display: flex; align-items: flex-start; gap: 10px;
+    font-size: 0.875rem; color: #94a3b8; line-height: 1.5;
+  }
+  .footer-contact-icon { width: 16px; height: 16px; flex-shrink: 0; margin-top: 2px; color: #00B4D8; }
+
+  .footer-bottom {
+    border-top: 1px solid rgba(255,255,255,0.07);
+    padding: 16px 0;
+  }
+  .footer-bottom-inner {
+    display: flex; align-items: center; justify-content: space-between; flex-wrap: wrap; gap: 8px;
+  }
+</style>

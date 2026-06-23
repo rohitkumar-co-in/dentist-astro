@@ -1,0 +1,286 @@
+---
+import { buildWhatsAppLink, clinic } from '../lib/site';
+import Icon from './Icon.astro';
+---
+
+<section id="home" class="hero-section overflow-hidden">
+  <!-- Decorative blobs -->
+  <div class="pointer-events-none absolute inset-0 overflow-hidden" aria-hidden="true">
+    <div class="hero-blob-1"></div>
+    <div class="hero-blob-2"></div>
+    <div class="hero-blob-3"></div>
+  </div>
+
+  <div class="page-shell section-pad relative">
+    <div class="grid items-center gap-12 lg:grid-cols-2 lg:gap-20">
+
+      <!-- LEFT: Copy -->
+      <div class="max-w-2xl" data-reveal>
+        <!-- Animated badge -->
+        <div class="hero-badge">
+          <span class="hero-badge-dot"></span>
+          <span>Now open · {clinic.openHours[1]}</span>
+        </div>
+
+        <h1 class="hero-title mt-6">
+          Dentistry that<br />
+          <span class="hero-title-accent">actually</span> cares
+        </h1>
+
+        <p class="hero-subtitle mt-6">
+          For {clinic.yearsInPractice} years, families across {clinic.area} have trusted us for honest care, zero judgment, and real results — all bookable in seconds on WhatsApp.
+        </p>
+
+        <!-- CTA buttons -->
+        <div class="mt-8 flex flex-col gap-3 sm:flex-row">
+          <a href="#appointment" class="action-btn-primary hero-cta-primary">
+            <svg class="h-5 w-5" fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z"/></svg>
+            Book Appointment
+          </a>
+          <a href={buildWhatsAppLink("Hi, I'd like to book an appointment.")} class="action-btn-secondary hero-cta-secondary" target="_blank" rel="noopener noreferrer">
+            <Icon name="whatsapp" class="h-5 w-5" size={20} />
+            WhatsApp Us
+          </a>
+        </div>
+
+        <!-- Trust strip -->
+        <div class="hero-trust-strip mt-8">
+          <div class="hero-avatars">
+            {['#0077B6','#00B4D8','#90E0EF','#2B2D42'].map((color) => (
+              <span class="hero-avatar" style={`background:${color}`}></span>
+            ))}
+          </div>
+          <div class="hero-trust-text">
+            <div class="hero-trust-stars">★★★★★</div>
+            <span class="hero-trust-label">Trusted by <strong>{clinic.patientsServed}</strong> families · {clinic.googleRating} Google rating</span>
+          </div>
+        </div>
+      </div>
+
+      <!-- RIGHT: Visual card -->
+      <div class="relative" data-reveal>
+        <!-- Glow rings -->
+        <div class="absolute -left-10 -top-10 h-40 w-40 rounded-full bg-aqua/20 blur-3xl" aria-hidden="true"></div>
+        <div class="absolute -bottom-8 -right-8 h-48 w-48 rounded-full bg-darkAqua/15 blur-3xl" aria-hidden="true"></div>
+
+        <div class="hero-card">
+          <!-- Header row -->
+          <div class="hero-card-header">
+            <div class="hero-card-icon">
+              <Icon name="tooth" size={28} class="h-7 w-7" />
+            </div>
+            <div>
+              <p class="font-heading text-base font-semibold text-charcoal">{clinic.name}</p>
+              <p class="text-xs text-slate-500">{clinic.area}, {clinic.city}</p>
+            </div>
+            <span class="hero-open-pill">● Open now</span>
+          </div>
+
+          <!-- Stats grid -->
+          <div class="hero-stats-grid">
+            <div class="hero-stat">
+              <span class="hero-stat-val">{clinic.googleRating}★</span>
+              <span class="hero-stat-key">Rating</span>
+            </div>
+            <div class="hero-stat">
+              <span class="hero-stat-val">{clinic.patientsServed.replace('+','').replace(',','') > '999' ? clinic.patientsServed.replace(',000+','k+') : clinic.patientsServed}</span>
+              <span class="hero-stat-key">Families</span>
+            </div>
+            <div class="hero-stat">
+              <span class="hero-stat-val">{clinic.yearsInPractice}yr</span>
+              <span class="hero-stat-key">Experience</span>
+            </div>
+            <div class="hero-stat">
+              <span class="hero-stat-val">{clinic.services.length}</span>
+              <span class="hero-stat-key">Services</span>
+            </div>
+          </div>
+
+          <!-- Services strip -->
+          <div class="hero-services-strip">
+            {['Checkup','Whitening','Implants','Braces'].map((s) => (
+              <span class="hero-service-tag">{s}</span>
+            ))}
+          </div>
+
+          <!-- Doctor row -->
+          <div class="hero-doctor-row">
+            <div class="hero-doctor-avatar">
+              <Icon name="user" size={24} class="h-6 w-6 opacity-80" />
+            </div>
+            <div class="flex-1">
+              <p class="text-sm font-semibold text-white">{clinic.doctorName}</p>
+              <p class="text-xs text-white/70">{clinic.doctorQualifications}</p>
+            </div>
+            <a href="#appointment" class="hero-book-btn">Book →</a>
+          </div>
+        </div>
+      </div>
+
+    </div>
+  </div>
+</section>
+
+<style>
+  .hero-section {
+    position: relative;
+    background: linear-gradient(135deg, #CAF0F8 0%, #E8FBFF 40%, #F7FCFE 100%);
+  }
+  .hero-blob-1 {
+    position: absolute; top: -80px; right: -60px;
+    width: 500px; height: 500px;
+    border-radius: 9999px;
+    background: radial-gradient(circle, rgba(0,180,216,0.18) 0%, transparent 70%);
+    animation: blobFloat 8s ease-in-out infinite;
+  }
+  .hero-blob-2 {
+    position: absolute; bottom: -60px; left: -80px;
+    width: 400px; height: 400px;
+    border-radius: 9999px;
+    background: radial-gradient(circle, rgba(0,119,182,0.12) 0%, transparent 70%);
+    animation: blobFloat 10s ease-in-out infinite reverse;
+  }
+  .hero-blob-3 {
+    position: absolute; top: 40%; left: 40%;
+    width: 300px; height: 300px;
+    border-radius: 9999px;
+    background: radial-gradient(circle, rgba(144,224,239,0.2) 0%, transparent 70%);
+    animation: blobFloat 12s ease-in-out infinite 2s;
+  }
+  @keyframes blobFloat {
+    0%, 100% { transform: translateY(0) scale(1); }
+    50% { transform: translateY(-24px) scale(1.04); }
+  }
+
+  .hero-badge {
+    display: inline-flex; align-items: center; gap: 8px;
+    padding: 6px 16px; border-radius: 9999px;
+    background: rgba(255,255,255,0.9);
+    border: 1px solid rgba(0,119,182,0.2);
+    box-shadow: 0 2px 12px rgba(0,119,182,0.1);
+    font-size: 0.8125rem; font-weight: 600; color: #0077B6;
+    backdrop-filter: blur(8px);
+    animation: badgePulse 3s ease-in-out infinite;
+  }
+  .hero-badge-dot {
+    width: 8px; height: 8px; border-radius: 50%;
+    background: #22c55e;
+    box-shadow: 0 0 0 3px rgba(34,197,94,0.25);
+    animation: dotPulse 2s ease-in-out infinite;
+  }
+  @keyframes badgePulse {
+    0%, 100% { box-shadow: 0 2px 12px rgba(0,119,182,0.1); }
+    50% { box-shadow: 0 4px 20px rgba(0,119,182,0.2); }
+  }
+  @keyframes dotPulse {
+    0%, 100% { box-shadow: 0 0 0 3px rgba(34,197,94,0.25); }
+    50% { box-shadow: 0 0 0 6px rgba(34,197,94,0.12); }
+  }
+
+  .hero-title {
+    font-family: 'Poppins', sans-serif;
+    font-size: clamp(2.5rem, 5vw, 3.75rem);
+    font-weight: 800; line-height: 1.1;
+    color: #2B2D42; letter-spacing: -0.02em;
+  }
+  .hero-title-accent {
+    background: linear-gradient(135deg, #0077B6 0%, #00B4D8 100%);
+    -webkit-background-clip: text; -webkit-text-fill-color: transparent;
+    background-clip: text;
+  }
+  .hero-subtitle {
+    font-size: 1.125rem; line-height: 1.75; color: rgba(43,45,66,0.72); max-width: 34rem;
+  }
+
+  .hero-cta-primary { min-height: 3rem; font-size: 1rem; }
+  .hero-cta-secondary { min-height: 3rem; font-size: 1rem; }
+
+  .hero-trust-strip {
+    display: flex; align-items: center; gap: 14px;
+  }
+  .hero-avatars {
+    display: flex;
+  }
+  .hero-avatar {
+    display: block; width: 34px; height: 34px; border-radius: 50%;
+    border: 2.5px solid white; margin-left: -10px; opacity: 0.9;
+  }
+  .hero-avatar:first-child { margin-left: 0; }
+  .hero-trust-text { display: flex; flex-direction: column; gap: 2px; }
+  .hero-trust-stars { color: #f59e0b; font-size: 0.875rem; letter-spacing: 1px; }
+  .hero-trust-label { font-size: 0.8125rem; color: rgba(43,45,66,0.65); }
+
+  /* Hero card */
+  .hero-card {
+    background: white;
+    border-radius: 20px;
+    border: 1px solid rgba(0,119,182,0.1);
+    box-shadow: 0 24px 60px rgba(0,119,182,0.12), 0 8px 24px rgba(43,45,66,0.06);
+    padding: 24px;
+    display: flex; flex-direction: column; gap: 20px;
+    position: relative; z-index: 1;
+    transition: transform 0.4s ease, box-shadow 0.4s ease;
+  }
+  .hero-card:hover {
+    transform: translateY(-4px);
+    box-shadow: 0 32px 72px rgba(0,119,182,0.16), 0 12px 32px rgba(43,45,66,0.08);
+  }
+  .hero-card-header {
+    display: flex; align-items: center; gap: 12px;
+  }
+  .hero-card-icon {
+    display: flex; align-items: center; justify-content: center;
+    width: 48px; height: 48px; border-radius: 14px;
+    background: linear-gradient(135deg, #CAF0F8, #90E0EF);
+  }
+  .hero-open-pill {
+    margin-left: auto;
+    padding: 4px 12px; border-radius: 9999px;
+    background: rgba(34,197,94,0.1); color: #16a34a;
+    font-size: 0.75rem; font-weight: 600;
+  }
+  .hero-stats-grid {
+    display: grid; grid-template-columns: repeat(4, 1fr); gap: 12px;
+  }
+  .hero-stat {
+    display: flex; flex-direction: column; align-items: center;
+    padding: 12px 8px; border-radius: 12px;
+    background: linear-gradient(135deg, #f7fcfe, #e8fbff);
+    border: 1px solid rgba(0,180,216,0.15);
+  }
+  .hero-stat-val {
+    font-family: 'Poppins', sans-serif;
+    font-size: 1.25rem; font-weight: 700; color: #0077B6;
+  }
+  .hero-stat-key {
+    font-size: 0.6875rem; color: rgba(43,45,66,0.55); margin-top: 2px; text-align: center;
+  }
+  .hero-services-strip {
+    display: flex; flex-wrap: wrap; gap: 8px;
+  }
+  .hero-service-tag {
+    padding: 5px 12px; border-radius: 9999px;
+    background: rgba(0,180,216,0.08); color: #0077B6;
+    font-size: 0.75rem; font-weight: 600;
+    border: 1px solid rgba(0,180,216,0.2);
+  }
+  .hero-doctor-row {
+    display: flex; align-items: center; gap: 12px;
+    padding: 14px; border-radius: 14px;
+    background: linear-gradient(135deg, #0077B6, #00B4D8); color: white;
+  }
+  .hero-doctor-avatar {
+    width: 42px; height: 42px; border-radius: 50%;
+    background: rgba(255,255,255,0.2);
+    display: flex; align-items: center; justify-content: center;
+    flex-shrink: 0;
+  }
+  .hero-book-btn {
+    padding: 6px 16px; border-radius: 9999px;
+    background: white; color: #0077B6;
+    font-size: 0.8125rem; font-weight: 700;
+    transition: transform 0.2s;
+    white-space: nowrap;
+  }
+  .hero-book-btn:hover { transform: translateX(3px); }
+</style>

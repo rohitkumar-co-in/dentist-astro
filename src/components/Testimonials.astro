@@ -1,0 +1,181 @@
+---
+import { clinic } from '../lib/site';
+
+const avatarColors = ['#0077B6', '#00B4D8', '#90E0EF'];
+---
+
+<section id="reviews" class="reviews-section section-pad" data-reveal>
+  <div class="page-shell">
+    <!-- Header -->
+    <div class="reviews-header">
+      <div class="max-w-2xl">
+        <span class="section-kicker">Patient reviews</span>
+        <h2 class="section-title mt-4">Real words from real families</h2>
+        <p class="section-copy">
+          Not paid testimonials — these are the kind of messages we get on WhatsApp and Google every week.
+        </p>
+      </div>
+
+      <!-- Overall rating badge -->
+      <div class="reviews-overall-badge">
+        <div class="reviews-overall-stars">★★★★★</div>
+        <div class="reviews-overall-score">{clinic.googleRating}</div>
+        <div class="reviews-overall-label">on Google</div>
+      </div>
+    </div>
+
+    <!-- Review cards -->
+    <div class="mt-12 grid gap-6 lg:grid-cols-3">
+      {clinic.testimonials.map((review, i) => (
+        <article class="review-card" style={`--ri:${i}`}>
+          <!-- Top row -->
+          <div class="review-top">
+            <div class="review-avatar" style={`background:${avatarColors[i % avatarColors.length]}`}>
+              {review.name.charAt(0)}
+            </div>
+            <div class="flex-1 min-w-0">
+              <p class="review-name">{review.name}</p>
+              <div class="review-stars">
+                {Array.from({ length: review.rating }).map(() => <span>★</span>)}
+              </div>
+            </div>
+            <span class="review-google-badge">
+              <svg viewBox="0 0 24 24" class="h-4 w-4" fill="none">
+                <path d="M22.56 12.25c0-.78-.07-1.53-.2-2.25H12v4.26h5.92c-.26 1.37-1.04 2.53-2.21 3.31v2.77h3.57c2.08-1.92 3.28-4.74 3.28-8.09z" fill="#4285F4"/>
+                <path d="M12 23c2.97 0 5.46-.98 7.28-2.66l-3.57-2.77c-.98.66-2.23 1.06-3.71 1.06-2.86 0-5.29-1.93-6.16-4.53H2.18v2.84C3.99 20.53 7.7 23 12 23z" fill="#34A853"/>
+                <path d="M5.84 14.09c-.22-.66-.35-1.36-.35-2.09s.13-1.43.35-2.09V7.07H2.18C1.43 8.55 1 10.22 1 12s.43 3.45 1.18 4.93l2.85-2.22.81-.62z" fill="#FBBC05"/>
+                <path d="M12 5.38c1.62 0 3.06.56 4.21 1.64l3.15-3.15C17.45 2.09 14.97 1 12 1 7.7 1 3.99 3.47 2.18 7.07l3.66 2.84c.87-2.6 3.3-4.53 6.16-4.53z" fill="#EA4335"/>
+              </svg>
+              Google
+            </span>
+          </div>
+
+          <!-- Quote -->
+          <blockquote class="review-quote">
+            <span class="review-quote-mark">"</span>
+            {review.quote}
+          </blockquote>
+
+          <!-- Bottom accent -->
+          <div class="review-card-footer">
+            <div class="review-verified">
+              <svg class="h-3.5 w-3.5 text-emerald-500" fill="currentColor" viewBox="0 0 20 20"><path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clip-rule="evenodd"/></svg>
+              Verified patient
+            </div>
+          </div>
+        </article>
+      ))}
+    </div>
+
+    <!-- CTA row -->
+    <div class="reviews-cta mt-10">
+      <div class="reviews-cta-text">
+        <p class="text-base font-semibold text-[var(--text)]">Join thousands of happy patients</p>
+        <p class="text-sm text-[var(--muted)]">Book today and see why families keep coming back.</p>
+      </div>
+      <div class="flex gap-3 flex-wrap">
+        <a href="https://g.page/r" target="_blank" rel="noreferrer" class="action-btn-secondary">
+          <svg viewBox="0 0 24 24" class="h-4 w-4" fill="none">
+            <path d="M22.56 12.25c0-.78-.07-1.53-.2-2.25H12v4.26h5.92c-.26 1.37-1.04 2.53-2.21 3.31v2.77h3.57c2.08-1.92 3.28-4.74 3.28-8.09z" fill="#4285F4"/>
+            <path d="M12 23c2.97 0 5.46-.98 7.28-2.66l-3.57-2.77c-.98.66-2.23 1.06-3.71 1.06-2.86 0-5.29-1.93-6.16-4.53H2.18v2.84C3.99 20.53 7.7 23 12 23z" fill="#34A853"/>
+            <path d="M5.84 14.09c-.22-.66-.35-1.36-.35-2.09s.13-1.43.35-2.09V7.07H2.18C1.43 8.55 1 10.22 1 12s.43 3.45 1.18 4.93l2.85-2.22.81-.62z" fill="#FBBC05"/>
+            <path d="M12 5.38c1.62 0 3.06.56 4.21 1.64l3.15-3.15C17.45 2.09 14.97 1 12 1 7.7 1 3.99 3.47 2.18 7.07l3.66 2.84c.87-2.6 3.3-4.53 6.16-4.53z" fill="#EA4335"/>
+          </svg>
+          All Google reviews
+        </a>
+        <a href="#appointment" class="action-btn-primary">Book your visit →</a>
+      </div>
+    </div>
+  </div>
+</section>
+
+<style>
+  .reviews-section { background: linear-gradient(180deg, rgba(202,240,248,0.15) 0%, white 100%); }
+
+  .reviews-header {
+    display: flex; align-items: flex-start; justify-content: space-between; gap: 24px; flex-wrap: wrap;
+  }
+  .reviews-overall-badge {
+    display: flex; flex-direction: column; align-items: center;
+    padding: 20px 28px; border-radius: 20px;
+    background: linear-gradient(135deg, #0077B6, #00B4D8);
+    box-shadow: 0 12px 32px rgba(0,119,182,0.3);
+    min-width: 120px;
+  }
+  .reviews-overall-stars { color: #FCD34D; font-size: 1.125rem; letter-spacing: 2px; }
+  .reviews-overall-score { font-family: 'Poppins', sans-serif; font-size: 2.5rem; font-weight: 800; color: white; line-height: 1; margin-top: 4px; }
+  .reviews-overall-label { font-size: 0.75rem; color: rgba(255,255,255,0.8); margin-top: 4px; }
+
+  .review-card {
+    display: flex; flex-direction: column; gap: 16px;
+    padding: 24px; border-radius: 20px;
+    background: white;
+    border: 1.5px solid rgba(0,119,182,0.1);
+    box-shadow: 0 4px 20px rgba(43,45,66,0.06);
+    transition: transform 0.3s ease, box-shadow 0.3s ease;
+    animation: reviewFade 0.5s ease both;
+    animation-delay: calc(var(--ri, 0) * 100ms);
+    position: relative; overflow: hidden;
+  }
+  .review-card::after {
+    content: '❝';
+    position: absolute; bottom: -10px; right: 16px;
+    font-size: 5rem; color: rgba(0,180,216,0.06);
+    font-family: Georgia, serif; line-height: 1; pointer-events: none;
+  }
+  .review-card:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 16px 40px rgba(0,119,182,0.14);
+  }
+  @keyframes reviewFade {
+    from { opacity: 0; transform: translateY(16px); }
+    to { opacity: 1; transform: translateY(0); }
+  }
+
+  .review-top { display: flex; align-items: center; gap: 12px; }
+  .review-avatar {
+    width: 44px; height: 44px; border-radius: 50%; flex-shrink: 0;
+    display: flex; align-items: center; justify-content: center;
+    font-size: 1.125rem; font-weight: 700; color: white;
+    font-family: 'Poppins', sans-serif;
+  }
+  .review-name { font-size: 0.9375rem; font-weight: 700; color: #2B2D42; }
+  .review-stars { color: #F59E0B; font-size: 0.875rem; margin-top: 2px; letter-spacing: 1px; }
+  .review-google-badge {
+    margin-left: auto; flex-shrink: 0;
+    display: inline-flex; align-items: center; gap: 5px;
+    padding: 4px 10px; border-radius: 9999px;
+    background: #f8f9fa; border: 1px solid #e9ecef;
+    font-size: 0.6875rem; font-weight: 600; color: #5f6368;
+  }
+
+  .review-quote {
+    flex: 1; font-size: 0.9375rem; line-height: 1.75;
+    color: rgba(43,45,66,0.75); position: relative;
+    font-style: italic;
+  }
+  .review-quote-mark {
+    font-size: 2rem; color: #00B4D8; line-height: 0.5;
+    vertical-align: -0.4em; margin-right: 2px;
+    font-style: normal; font-family: Georgia, serif;
+  }
+
+  .review-card-footer {
+    display: flex; align-items: center;
+    padding-top: 12px;
+    border-top: 1px solid rgba(0,119,182,0.08);
+  }
+  .review-verified {
+    display: inline-flex; align-items: center; gap: 5px;
+    font-size: 0.75rem; color: #16a34a; font-weight: 600;
+  }
+
+  .reviews-cta {
+    display: flex; align-items: center; justify-content: space-between;
+    gap: 20px; flex-wrap: wrap;
+    padding: 24px 28px; border-radius: 18px;
+    border: 1.5px solid rgba(0,119,182,0.12);
+    background: rgba(202,240,248,0.2);
+  }
+  .reviews-cta-text { flex: 1; }
+</style>

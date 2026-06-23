@@ -1,0 +1,277 @@
+---
+import { buildWhatsAppLink, clinic } from '../lib/site';
+import Icon from './Icon.astro';
+---
+
+<section id="appointment" class="section-pad" data-reveal>
+  <div class="page-shell">
+    <div class="grid gap-10 lg:grid-cols-[1fr_0.9fr] lg:items-start">
+
+      <!-- ── LEFT COLUMN ── -->
+      <div class="flex flex-col gap-10 lg:pr-8">
+
+        <!-- Heading -->
+        <div>
+          <span class="section-kicker">Let's fix that</span>
+          <h2 class="section-title mt-4">Quick appointment booking</h2>
+          <p class="section-copy">
+            Fill out the form and we'll WhatsApp you to confirm within minutes. Or reach us directly — we pick up fast.
+          </p>
+        </div>
+
+        <!-- Inline trust stats -->
+        <div class="flex items-center gap-0 divide-x divide-[var(--border)]">
+          <div class="appt-inline-stat pr-6">
+            <span class="appt-inline-num">{clinic.googleRating}★</span>
+            <span class="appt-inline-label">Google Rating</span>
+          </div>
+          <div class="appt-inline-stat px-6">
+            <span class="appt-inline-num">{clinic.patientsServed}</span>
+            <span class="appt-inline-label">Families</span>
+          </div>
+          <div class="appt-inline-stat pl-6">
+            <span class="appt-inline-num">{clinic.yearsInPractice} yrs</span>
+            <span class="appt-inline-label">Experience</span>
+          </div>
+        </div>
+
+        <!-- Hours — simple line, no card -->
+        <div class="flex items-center gap-3 text-sm text-[var(--muted)]">
+          <svg class="h-4 w-4 shrink-0 text-aqua" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"/><path stroke-linecap="round" stroke-linejoin="round" d="M12 6v6l4 2"/></svg>
+          <span><strong class="text-[var(--text)] font-medium">{clinic.openHours[0]}</strong> &nbsp;·&nbsp; {clinic.openHours[1]} &nbsp;·&nbsp; Open all days</span>
+        </div>
+
+        <!-- How it works — clean connected steps -->
+        <div>
+          <p class="mb-6 text-xs font-semibold uppercase tracking-widest text-[var(--muted)]">How booking works</p>
+          <ol class="relative flex flex-col gap-0">
+            {[
+              { n: '1', title: 'Fill the form', desc: 'Takes under 2 minutes. Your info stays private.' },
+              { n: '2', title: 'We WhatsApp you back', desc: 'Usually within minutes during clinic hours.' },
+              { n: '3', title: 'Walk in & smile', desc: 'No waiting room chaos — your slot is reserved.' },
+            ].map((step, i) => (
+              <li class="appt-clean-step">
+                <div class="appt-clean-step-left">
+                  <span class="appt-clean-num">{step.n}</span>
+                  {i < 2 && <div class="appt-clean-line"></div>}
+                </div>
+                <div class="appt-clean-content">
+                  <p class="font-semibold text-[var(--text)]">{step.title}</p>
+                  <p class="mt-0.5 text-sm leading-relaxed text-[var(--muted)]">{step.desc}</p>
+                </div>
+              </li>
+            ))}
+          </ol>
+        </div>
+
+      </div>
+
+
+      <!-- ── RIGHT COLUMN (Form) ── -->
+      <form class="card-elevated space-y-4 p-5 sm:p-6" data-appointment-form>
+
+        <!-- Name row -->
+        <div class="grid gap-4 sm:grid-cols-2">
+          <label class="block">
+            <span class="mb-1.5 block text-sm font-medium text-slate-700">First name</span>
+            <input class="input-field" name="firstName" type="text" placeholder="e.g. Priya" required autocomplete="given-name" />
+          </label>
+          <label class="block">
+            <span class="mb-1.5 block text-sm font-medium text-slate-700">Last name</span>
+            <input class="input-field" name="lastName" type="text" placeholder="e.g. Sharma" required autocomplete="family-name" />
+          </label>
+        </div>
+
+        <!-- Contact row -->
+        <div class="grid gap-4 sm:grid-cols-2">
+          <label class="block">
+            <span class="mb-1.5 block text-sm font-medium text-slate-700">WhatsApp number</span>
+            <input class="input-field" name="phone" type="tel" placeholder="98XXX XXXXX" required autocomplete="tel" />
+          </label>
+          <label class="block">
+            <span class="mb-1.5 flex items-center gap-1.5 text-sm font-medium text-slate-700">
+              Email
+              <span class="text-xs font-normal text-slate-400">(optional)</span>
+            </span>
+            <input class="input-field" name="email" type="email" placeholder="you@example.com" autocomplete="email" />
+          </label>
+        </div>
+
+        <!-- Service -->
+        <label class="block">
+          <span class="mb-1.5 block text-sm font-medium text-slate-700">What brings you in?</span>
+          <select class="input-field" name="service" required>
+            <option value="">Select a treatment or concern…</option>
+            {clinic.services.map((service) => <option value={service.name}>{service.name}</option>)}
+            <option value="Not sure">Not sure yet — just want a checkup</option>
+          </select>
+        </label>
+
+        <!-- Date & Time -->
+        <div class="grid gap-4 sm:grid-cols-2">
+          <label class="block">
+            <span class="mb-1.5 block text-sm font-medium text-slate-700">Preferred date</span>
+            <input class="input-field" name="appointmentDate" type="date" required />
+            <p class="mt-1 text-xs text-slate-400">Mon – Sun, we're open all days</p>
+          </label>
+          <label class="block">
+            <span class="mb-1.5 block text-sm font-medium text-slate-700">Preferred time</span>
+            <input class="input-field" name="appointmentTime" type="time" min="09:30" max="20:30" required />
+            <p class="mt-1 text-xs text-slate-400">Clinic hours: 9:30 AM – 8:30 PM</p>
+          </label>
+        </div>
+
+        <!-- Message -->
+        <label class="block">
+          <span class="mb-1.5 flex items-center gap-1.5 text-sm font-medium text-slate-700">
+            Anything we should know?
+            <span class="text-xs font-normal text-slate-400">(optional)</span>
+          </span>
+          <textarea
+            class="input-field min-h-28 resize-y"
+            name="message"
+            placeholder="e.g. I'm nervous about injections, I have a broken tooth, it's been a while since my last visit…"
+          ></textarea>
+        </label>
+
+        <div class="flex flex-col gap-3 sm:flex-row">
+          <button type="submit" class="action-btn-primary min-h-12 text-base">
+            <Icon name="whatsapp" class="h-5 w-5" size={20} />
+            Book via WhatsApp
+          </button>
+          <a href={clinic.phoneTel} class="action-btn-secondary min-h-12 text-base">
+            <Icon name="phone" class="h-5 w-5" size={20} />
+            Call the clinic
+          </a>
+        </div>
+
+        <p class="hidden rounded-[12px] bg-paleAqua/60 px-4 py-3 text-sm font-medium text-darkAqua" data-form-success role="status"></p>
+      </form>
+
+    </div>
+
+    <div id="contact" class="mt-14 border-t border-[var(--border)] pt-14">
+      <div class="grid gap-10 lg:grid-cols-[0.95fr_1.05fr] lg:items-start">
+
+        <!-- LEFT: Contact info -->
+        <div>
+          <span class="section-kicker">Contact</span>
+          <h3 class="section-title mt-4">Reach us easily</h3>
+          <p class="mt-3 text-[var(--muted)] text-sm leading-relaxed">
+            We're always a message or call away. Walk-ins are welcome too.
+          </p>
+
+          <ul class="mt-8 flex flex-col divide-y divide-[var(--border)]">
+
+            <!-- Address -->
+            <li class="contact-row">
+              <span class="contact-row-icon">
+                <svg class="h-4 w-4" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z"/><path stroke-linecap="round" stroke-linejoin="round" d="M15 11a3 3 0 11-6 0 3 3 0 016 0z"/></svg>
+              </span>
+              <div>
+                <p class="contact-row-label">Address</p>
+                <p class="contact-row-value">{clinic.address}</p>
+                <a href={`https://maps.google.com?q=${encodeURIComponent(clinic.googleMapsQuery)}`} target="_blank" rel="noopener noreferrer" class="contact-row-action">Open in Maps →</a>
+              </div>
+            </li>
+
+            <!-- Phone -->
+            <li class="contact-row">
+              <span class="contact-row-icon">
+                <svg class="h-4 w-4" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M3 5a2 2 0 012-2h3.28a1 1 0 01.948.684l1.498 4.493a1 1 0 01-.502 1.21l-2.257 1.13a11.042 11.042 0 005.516 5.516l1.13-2.257a1 1 0 011.21-.502l4.493 1.498a1 1 0 01.684.949V19a2 2 0 01-2 2h-1C9.716 21 3 14.284 3 6V5z"/></svg>
+              </span>
+              <div>
+                <p class="contact-row-label">Phone</p>
+                <a href={clinic.phoneTel} class="contact-row-value font-semibold text-[var(--text)] hover:text-darkAqua transition-colors">{clinic.phoneDisplay}</a>
+              </div>
+            </li>
+
+            <!-- WhatsApp -->
+            <li class="contact-row">
+              <span class="contact-row-icon text-emerald-600">
+                <svg class="h-4 w-4" fill="currentColor" viewBox="0 0 24 24"><path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347z"/><path d="M12 0C5.373 0 0 5.373 0 12c0 2.123.554 4.116 1.527 5.847L.057 23.07a.75.75 0 00.924.924l5.223-1.47A11.945 11.945 0 0012 24c6.627 0 12-5.373 12-12S18.627 0 12 0zm0 22c-1.9 0-3.7-.49-5.264-1.352l-.376-.21-3.902 1.097 1.098-3.9-.21-.378A9.944 9.944 0 012 12C2 6.477 6.477 2 12 2s10 4.477 10 10-4.477 10-10 10z"/></svg>
+              </span>
+              <div>
+                <p class="contact-row-label">WhatsApp</p>
+                <a href={buildWhatsAppLink("Hi, I'd like to book an appointment.")} target="_blank" rel="noopener noreferrer" class="contact-row-value font-semibold text-emerald-600 hover:text-emerald-700 transition-colors">Chat now — reply in minutes</a>
+              </div>
+            </li>
+
+            <!-- Hours -->
+            <li class="contact-row">
+              <span class="contact-row-icon">
+                <svg class="h-4 w-4" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"/><path stroke-linecap="round" stroke-linejoin="round" d="M12 6v6l4 2"/></svg>
+              </span>
+              <div>
+                <p class="contact-row-label">Hours</p>
+                <p class="contact-row-value">{clinic.openHours[0]} &nbsp;·&nbsp; {clinic.openHours[1]}</p>
+                <p class="mt-0.5 text-xs text-[var(--muted)]">Open all days — including weekends</p>
+              </div>
+            </li>
+
+            <!-- Email -->
+            <li class="contact-row">
+              <span class="contact-row-icon">
+                <svg class="h-4 w-4" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M3 8l7.89 5.26a2 2 0 002.22 0L21 8M5 19h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z"/></svg>
+              </span>
+              <div>
+                <p class="contact-row-label">Email</p>
+                <a href={`mailto:${clinic.email}`} class="contact-row-value font-medium text-darkAqua hover:text-aqua transition-colors">{clinic.email}</a>
+              </div>
+            </li>
+
+          </ul>
+        </div>
+
+        <!-- RIGHT: Map -->
+        <div class="card-elevated overflow-hidden p-3 sm:p-4">
+          <iframe
+            title="Google Maps location for AquaSmile Dental Clinic"
+            src={`https://www.google.com/maps?q=${encodeURIComponent(clinic.googleMapsQuery)}&z=15&output=embed`}
+            class="min-h-[400px] w-full rounded-[12px] border-0"
+            loading="lazy"
+            referrerpolicy="no-referrer-when-downgrade"
+          ></iframe>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <script is:inline>
+    const form = document.querySelector('[data-appointment-form]');
+    const successMessage = document.querySelector('[data-form-success]');
+
+    if (form && successMessage) {
+      form.addEventListener('submit', (event) => {
+        event.preventDefault();
+
+        const formData = new FormData(form);
+        const firstName = String(formData.get('firstName') || '').trim();
+        const lastName = String(formData.get('lastName') || '').trim();
+        const phone = String(formData.get('phone') || '').trim();
+        const email = String(formData.get('email') || '').trim();
+        const service = String(formData.get('service') || '').trim();
+        const appointmentDate = String(formData.get('appointmentDate') || '').trim();
+        const appointmentTime = String(formData.get('appointmentTime') || '').trim();
+        const message = String(formData.get('message') || '').trim();
+
+        const whatsappText = encodeURIComponent([
+          'Hi, I would like to book an appointment.',
+          `Name: ${firstName} ${lastName}`,
+          `Phone: ${phone}`,
+          email ? `Email: ${email}` : null,
+          `Service: ${service}`,
+          appointmentDate && appointmentTime ? `Preferred: ${appointmentDate} at ${appointmentTime}` : null,
+          message ? `Additional info: ${message}` : null,
+        ].filter(Boolean).join('\n'));
+
+        // No backend is used here; we confirm the form and then open a prefilled WhatsApp chat.
+        successMessage.classList.remove('hidden');
+        successMessage.textContent = 'Request prepared. Opening WhatsApp so the clinic receives your booking details right away.';
+
+        window.open(`https://wa.me/${clinic.whatsappNumber}?text=${whatsappText}`, '_blank', 'noopener,noreferrer');
+        form.reset();
+      });
+    }
+  </script>
+</section>

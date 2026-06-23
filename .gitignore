@@ -1,0 +1,34 @@
+# Build output
+dist/
+.output/
+
+# Astro cache
+.astro/
+
+# Node
+node_modules/
+
+# Environment files
+.env
+.env.*
+!.env.example
+
+# Editor & OS
+.DS_Store
+Thumbs.db
+*.suo
+*.user
+.idea/
+.vscode/*
+!.vscode/extensions.json
+
+# Logs
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+pnpm-debug.log*
+
+# Gemini / AI agent files (not part of the project)
+.agents/
+skills-lock.json
+new_clinic_prompt_template.md
