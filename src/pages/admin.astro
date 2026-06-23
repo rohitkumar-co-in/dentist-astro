@@ -60,8 +60,10 @@ const clinicName = clinic.name;
             </div>
           </div>
           <div class="flex items-center gap-3">
-            <button id="refresh-btn" class="action-btn-secondary min-h-10 px-3 hover:bg-slate-50" title="Refresh Data">
-              <svg class="h-4 w-4" fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M4 4v5h.582m15.356 2A8.001 8.001 0 1121.21 7.89M9 11l3-3 3 3m-3-3v12"/></svg>
+            <button id="refresh-btn" class="action-btn-secondary min-h-10 px-3 hover:bg-slate-50 transition" title="Refresh Data">
+              <svg class="h-4 w-4 text-slate-500" fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" d="M16.023 9.348h4.992v-.001M2.985 19.644v-4.992m0 0h4.992m-4.993 0l3.181 3.183a8.25 8.25 0 0013.803-3.7M4.031 9.865a8.25 8.25 0 0113.803-3.7l3.181 3.182m0-4.991v4.99" />
+              </svg>
             </button>
             <button id="logout-btn" class="action-btn min-h-10 px-4 text-sm font-semibold border border-red-200 bg-red-50 text-red-600 hover:bg-red-100 transition rounded-[12px]">
               Logout
@@ -608,8 +610,11 @@ const clinicName = clinic.name;
         checkAccess();
       });
 
-      refreshBtn.addEventListener('click', () => {
-        fetchBookings();
+      refreshBtn.addEventListener('click', async () => {
+        const svg = refreshBtn.querySelector('svg');
+        if (svg) svg.classList.add('animate-spin');
+        await fetchBookings();
+        if (svg) svg.classList.remove('animate-spin');
       });
 
       // API Actions
