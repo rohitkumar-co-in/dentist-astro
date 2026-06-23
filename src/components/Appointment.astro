@@ -134,15 +134,13 @@ import Icon from './Icon.astro';
           ></textarea>
         </label>
 
-        <div class="flex flex-col gap-3 sm:flex-row">
-          <button type="submit" class="action-btn-primary min-h-12 text-base">
-            <Icon name="whatsapp" class="h-5 w-5" size={20} />
-            Book via WhatsApp
+        <div class="space-y-2 pt-2">
+          <button type="submit" class="action-btn-primary min-h-12 w-full text-base justify-center">
+            Confirm & Book Appointment
           </button>
-          <a href={clinic.phoneTel} class="action-btn-secondary min-h-12 text-base">
-            <Icon name="phone" class="h-5 w-5" size={20} />
-            Call the clinic
-          </a>
+          <p class="text-center text-xs text-slate-400">
+            Saves your slot and opens WhatsApp for instant confirmation.
+          </p>
         </div>
 
         <p class="hidden rounded-[12px] bg-paleAqua/60 px-4 py-3 text-sm font-medium text-darkAqua" data-form-success role="status"></p>
