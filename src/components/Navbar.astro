@@ -5,7 +5,7 @@ import { clinic, navigationLinks, buildWhatsAppLink } from '../lib/site';
 <header class="navbar" id="site-navbar">
   <div class="page-shell navbar-inner">
     <!-- Logo -->
-    <a href="#top" class="navbar-logo" aria-label="{clinic.name} home">
+    <a href="/" class="navbar-logo" aria-label="{clinic.name} home">
       <span class="navbar-logo-icon">AS</span>
       <span class="navbar-logo-text">
         <span class="navbar-logo-name">{clinic.name}</span>
@@ -195,12 +195,15 @@ import { clinic, navigationLinks, buildWhatsAppLink } from '../lib/site';
     }
   }, { passive: true });
 
-  document.querySelectorAll('a[href="#top"]').forEach((homeLink) => {
+  document.querySelectorAll('a[href="/"]').forEach((homeLink) => {
     homeLink.addEventListener('click', (event) => {
-      if (window.scrollY <= 2) {
+      const isHomepage = window.location.pathname === '/' || window.location.pathname === '/index.html';
+      if (isHomepage) {
         event.preventDefault();
-        if (window.location.hash !== '#top') {
-          window.history.replaceState(null, '', '#top');
+        window.scrollTo({ top: 0, behavior: 'smooth' });
+        // Clean hash from URL without reloading
+        if (window.location.hash) {
+          window.history.pushState('', document.title, window.location.pathname + window.location.search);
         }
       }
     });

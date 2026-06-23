@@ -166,7 +166,7 @@ export const clinic = {
 
 /* ─── Navigation (labels only — hrefs are anchor links, don't change) ─── */
 export const navigationLinks = [
-  { label: 'Home',     href: '#top' },
+  { label: 'Home',     href: '/' },
   { label: 'About',    href: '#about' },
   { label: 'Services', href: '#services' },
   { label: 'Reviews',  href: '#reviews' },
