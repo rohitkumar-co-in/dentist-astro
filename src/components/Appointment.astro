@@ -115,8 +115,32 @@ import Icon from './Icon.astro';
             <p class="mt-1 text-xs text-slate-400">Mon – Sun, we're open all days</p>
           </label>
           <label class="block">
-            <span class="mb-1.5 block text-sm font-medium text-slate-700">Preferred time</span>
-            <input class="input-field" name="appointmentTime" type="time" min="09:30" max="20:30" required />
+            <span class="mb-1.5 block text-sm font-medium text-slate-700">Preferred time slot</span>
+            <select class="input-field" name="appointmentTime" required>
+              <option value="">Select a time slot…</option>
+              <option value="09:30 AM">09:30 AM</option>
+              <option value="10:00 AM">10:00 AM</option>
+              <option value="10:30 AM">10:30 AM</option>
+              <option value="11:00 AM">11:00 AM</option>
+              <option value="11:30 AM">11:30 AM</option>
+              <option value="12:00 PM">12:00 PM</option>
+              <option value="12:30 PM">12:30 PM</option>
+              <option value="01:00 PM">01:00 PM</option>
+              <option value="01:30 PM">01:30 PM</option>
+              <option value="02:00 PM">02:00 PM</option>
+              <option value="02:30 PM">02:30 PM</option>
+              <option value="03:00 PM">03:00 PM</option>
+              <option value="03:30 PM">03:30 PM</option>
+              <option value="04:00 PM">04:00 PM</option>
+              <option value="04:30 PM">04:30 PM</option>
+              <option value="05:00 PM">05:00 PM</option>
+              <option value="05:30 PM">05:30 PM</option>
+              <option value="06:00 PM">06:00 PM</option>
+              <option value="06:30 PM">06:30 PM</option>
+              <option value="07:00 PM">07:00 PM</option>
+              <option value="07:30 PM">07:30 PM</option>
+              <option value="08:00 PM">08:00 PM</option>
+            </select>
             <p class="mt-1 text-xs text-slate-400">Clinic hours: 9:30 AM – 8:30 PM</p>
           </label>
         </div>
@@ -143,7 +167,7 @@ import Icon from './Icon.astro';
           </p>
         </div>
 
-        <p class="hidden rounded-[12px] bg-paleAqua/60 px-4 py-3 text-sm font-medium text-darkAqua" data-form-success role="status"></p>
+        <div class="hidden rounded-[12px] bg-paleAqua/30 border border-aqua/10 p-6 text-center text-darkAqua" data-form-success role="status"></div>
       </form>
 
     </div>
@@ -236,6 +260,24 @@ import Icon from './Icon.astro';
   </div>
 
   <script define:vars={{ whatsappNumber: clinic.whatsappNumber, googleSheetsScriptUrl: clinic.googleSheetsScriptUrl }}>
+    // Set date input min attribute to today's date in Indian Standard Time (GMT+5:30)
+    const getIndianDateString = () => {
+      const now = new Date();
+      const utc = now.getTime() + (now.getTimezoneOffset() * 60000);
+      const ist = new Date(utc + (3600000 * 5.5));
+      const year = ist.getFullYear();
+      const month = String(ist.getMonth() + 1).padStart(2, '0');
+      const day = String(ist.getDate()).padStart(2, '0');
+      return `${year}-${month}-${day}`;
+    };
+
+    const dateInput = document.querySelector('input[name="appointmentDate"]');
+    if (dateInput) {
+      const todayIST = getIndianDateString();
+      dateInput.min = todayIST;
+      dateInput.value = todayIST;
+    }
+
     const form = document.querySelector('[data-appointment-form]');
     const successMessage = document.querySelector('[data-form-success]');
 
@@ -271,17 +313,38 @@ import Icon from './Icon.astro';
           submitBtn.innerHTML = 'Saving...';
         }
 
-        const proceedToWhatsApp = () => {
+        const showSuccessUI = () => {
+          // Hide all form children except the success message container
+          Array.from(form.children).forEach((child) => {
+            if (child !== successMessage) {
+              child.classList.add('hidden');
+            }
+          });
+
+          // Style and display the success message
           successMessage.classList.remove('hidden');
-          successMessage.textContent = 'Request prepared. Opening WhatsApp so the clinic receives your booking details right away.';
-
-          window.open(`https://wa.me/${whatsappNumber}?text=${whatsappText}`, '_blank', 'noopener,noreferrer');
+          successMessage.innerHTML = `
+            <div class="flex flex-col items-center justify-center py-6 text-slate-800">
+              <span class="flex h-12 w-12 items-center justify-center rounded-full bg-emerald-100 text-emerald-600 mb-4 ring-8 ring-emerald-50">
+                <svg class="h-6 w-6" fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M5 13l4 4L19 7"/></svg>
+              </span>
+              <h4 class="text-lg font-bold text-darkAqua">Appointment Request Saved!</h4>
+              <p class="mt-2 text-sm leading-relaxed text-[var(--muted)]">
+                We've recorded your slot request in our clinic database. The clinic staff will contact you shortly to confirm your booking.
+              </p>
+              
+              <div class="w-full border-t border-[var(--border)] my-5"></div>
+              
+              <div class="w-full space-y-3">
+                <p class="text-xs font-medium text-slate-500 uppercase tracking-wider">Want instant confirmation?</p>
+                <a href="https://wa.me/${whatsappNumber}?text=${whatsappText}" target="_blank" rel="noopener,noreferrer" class="action-btn-primary inline-flex min-h-12 w-full items-center justify-center gap-2 rounded-[12px] bg-emerald-600 text-white font-semibold shadow-soft hover:bg-emerald-700 transition">
+                  <svg class="h-5 w-5 fill-current" viewBox="0 0 24 24"><path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347z"/><path d="M12 0C5.373 0 0 5.373 0 12c0 2.123.554 4.116 1.527 5.847L.057 23.07a.75.75 0 00.924.924l5.223-1.47A11.945 11.945 0 0012 24c6.627 0 12-5.373 12-12S18.627 0 12 0zm0 22c-1.9 0-3.7-.49-5.264-1.352l-.376-.21-3.902 1.097 1.098-3.9-.21-.378A9.944 9.944 0 012 12C2 6.477 6.477 2 12 2s10 4.477 10 10-4.477 10-10 10z"/></svg>
+                  Message us on WhatsApp
+                </a>
+              </div>
+            </div>
+          `;
           form.reset();
-
-          if (submitBtn) {
-            submitBtn.disabled = false;
-            submitBtn.innerHTML = originalBtnHTML;
-          }
         };
 
         if (googleSheetsScriptUrl) {
@@ -306,10 +369,10 @@ import Icon from './Icon.astro';
             console.error('Error saving to Google Sheets:', err);
           })
           .finally(() => {
-            proceedToWhatsApp();
+            showSuccessUI();
           });
         } else {
-          proceedToWhatsApp();
+          showSuccessUI();
         }
       });
     }
