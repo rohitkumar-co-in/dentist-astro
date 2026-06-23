@@ -27,9 +27,8 @@ export const clinic = {
   email: 'hello@aquasmile.example',
   address: '2nd Floor, Aqua Arcade, Link Road, Andheri West, Mumbai, Maharashtra 400053',
   googleMapsQuery: 'AquaSmile Dental Clinic Andheri West Mumbai',
-  googleSheetsScriptUrl: import.meta.env.PUBLIC_GOOGLE_SHEETS_SCRIPT_URL || '', // Configured via environment variable
-  adminUsername: import.meta.env.PUBLIC_ADMIN_USERNAME || 'admin', // Configured via environment variable
-  adminPassword: import.meta.env.PUBLIC_ADMIN_PASSWORD || 'AquaSmileAdmin2026', // Configured via environment variable
+  supabaseUrl: import.meta.env.PUBLIC_SUPABASE_URL || '', // Configured via environment variable
+  supabaseAnonKey: import.meta.env.PUBLIC_SUPABASE_ANON_KEY || '', // Configured via environment variable
 
   /** Instagram, Facebook profile URLs */
   instagramUrl: 'https://instagram.com',

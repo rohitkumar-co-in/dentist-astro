@@ -2,7 +2,6 @@
 import '../styles/global.css';
 import { clinic } from '../lib/site';
 
-const googleSheetsScriptUrl = clinic.googleSheetsScriptUrl;
 const adminUsername = clinic.adminUsername;
 const adminPassword = clinic.adminPassword;
 const clinicName = clinic.name;
@@ -80,7 +79,11 @@ const clinicName = clinic.name;
             <h1 class="text-2xl sm:text-3xl font-extrabold text-slate-800 tracking-tight">Appointments Overview</h1>
             <p class="text-sm text-[var(--muted)]">Monitor, search, confirm, reschedule or cancel customer bookings.</p>
           </div>
-          <div>
+          <div class="flex items-center gap-3">
+            <button id="download-csv-btn" class="action-btn-secondary min-h-11 justify-center border-slate-200 hover:bg-slate-50 gap-1.5 font-semibold text-slate-700">
+              <svg class="h-4 w-4 text-slate-500" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-4l-4 4m0 0l-4-4m4 4V4"/></svg>
+              Export CSV
+            </button>
             <button id="open-add-modal-btn" class="action-btn-primary min-h-11 justify-center shadow-soft">
               <svg class="h-5 w-5" fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M12 4v16m8-8H4"/></svg>
               Add Appointment
@@ -360,8 +363,9 @@ const clinicName = clinic.name;
     </div>
 
     <!-- ──────── SCRIPT BLOCK ──────── -->
-    <script define:vars={{ googleSheetsScriptUrl, adminUsername, adminPassword }}>
+    <script define:vars={{ supabaseUrl: clinic.supabaseUrl, supabaseAnonKey: clinic.supabaseAnonKey }}>
       let bookingsData = [];
+      let filteredBookings = [];
 
       const loginContainer = document.getElementById('login-container');
       const dashboardContainer = document.getElementById('dashboard-container');
@@ -372,6 +376,7 @@ const clinicName = clinic.name;
       
       const refreshBtn = document.getElementById('refresh-btn');
       const logoutBtn = document.getElementById('logout-btn');
+      const downloadCsvBtn = document.getElementById('download-csv-btn');
       
       const searchInput = document.getElementById('search-input');
       const filterStatus = document.getElementById('filter-status');
@@ -494,30 +499,35 @@ const clinicName = clinic.name;
           loadingState.classList.remove('hidden');
           bookingsSectionsContainer.classList.add('hidden');
 
-          try {
-            const payload = {
-              firstName,
-              lastName,
-              phone,
-              email,
-              service,
-              appointmentDate: date,
-              appointmentTime: time,
-              message
-            };
+          // Generate sequential-like unique ID client-side
+          const formattedDate = date.replace(/-/g, "");
+          const randomSuffix = Math.floor(1000 + Math.random() * 9000);
+          const generatedId = `A-${formattedDate}-${randomSuffix}`;
 
-            const response = await fetch(googleSheetsScriptUrl, {
+          try {
+            const response = await fetch(`${supabaseUrl}/rest/v1/bookings`, {
               method: 'POST',
               headers: {
-                'Content-Type': 'text/plain',
+                'apikey': supabaseAnonKey,
+                'Authorization': `Bearer ${supabaseAnonKey}`,
+                'Content-Type': 'application/json',
+                'Prefer': 'return=representation'
               },
-              body: JSON.stringify(payload)
+              body: JSON.stringify({
+                appointment_id: generatedId,
+                first_name: firstName,
+                last_name: lastName,
+                phone: phone,
+                email: email || null,
+                service: service,
+                date: date,
+                time: time,
+                message: message || null,
+                status: 'Confirmed'
+              })
             });
 
             if (!response.ok) throw new Error('Network response not OK');
-            const res = await response.json();
-            if (res.result !== 'success') throw new Error(res.error || 'Failed to save');
-
             fetchBookings();
           } catch (err) {
             console.error(err);
@@ -530,9 +540,8 @@ const clinicName = clinic.name;
 
       // Username & Password Access Control
       const checkAccess = () => {
-        const storedUser = localStorage.getItem('clinic_admin_user');
-        const storedPass = localStorage.getItem('clinic_admin_pass');
-        if (storedUser === adminUsername && storedPass === adminPassword) {
+        const isLoggedIn = localStorage.getItem('clinic_admin_logged_in') === 'true';
+        if (isLoggedIn) {
           loginContainer.classList.add('hidden');
           dashboardContainer.classList.remove('hidden');
           fetchBookings();
@@ -542,24 +551,45 @@ const clinicName = clinic.name;
         }
       };
 
-      loginForm.addEventListener('submit', (e) => {
+      loginForm.addEventListener('submit', async (e) => {
         e.preventDefault();
         const userVal = adminUserInput.value.trim();
         const passVal = adminPassInput.value.trim();
-        if (userVal === adminUsername && passVal === adminPassword) {
-          localStorage.setItem('clinic_admin_user', userVal);
-          localStorage.setItem('clinic_admin_pass', passVal);
-          loginError.classList.add('hidden');
-          checkAccess();
-        } else {
-          loginError.textContent = 'Incorrect username or password. Please try again.';
+        
+        loginError.classList.add('hidden');
+        const loginBtn = loginForm.querySelector('button[type="submit"]');
+        const originalText = loginBtn.textContent;
+        loginBtn.disabled = true;
+        loginBtn.textContent = 'Verifying...';
+
+        try {
+          const response = await fetch(`${supabaseUrl}/rest/v1/admin_credentials?username=eq.${encodeURIComponent(userVal)}&password=eq.${encodeURIComponent(passVal)}&select=username`, {
+            headers: {
+              'apikey': supabaseAnonKey,
+              'Authorization': `Bearer ${supabaseAnonKey}`
+            }
+          });
+          if (!response.ok) throw new Error('Authentication failed');
+          const data = await response.json();
+          if (data && data.length > 0) {
+            localStorage.setItem('clinic_admin_logged_in', 'true');
+            checkAccess();
+          } else {
+            loginError.textContent = 'Incorrect username or password. Please try again.';
+            loginError.classList.remove('hidden');
+          }
+        } catch (err) {
+          console.error(err);
+          loginError.textContent = 'Connection error. Could not verify credentials.';
           loginError.classList.remove('hidden');
+        } finally {
+          loginBtn.disabled = false;
+          loginBtn.textContent = originalText;
         }
       });
 
       logoutBtn.addEventListener('click', () => {
-        localStorage.removeItem('clinic_admin_user');
-        localStorage.removeItem('clinic_admin_pass');
+        localStorage.removeItem('clinic_admin_logged_in');
         if (adminUserInput) adminUserInput.value = '';
         if (adminPassInput) adminPassInput.value = '';
         checkAccess();
@@ -571,8 +601,8 @@ const clinicName = clinic.name;
 
       // API Actions
       const fetchBookings = async () => {
-        if (!googleSheetsScriptUrl) {
-          showError("Google Sheets App Script URL is not configured.");
+        if (!supabaseUrl || !supabaseAnonKey) {
+          showError("Supabase configuration is missing.");
           return;
         }
 
@@ -581,48 +611,59 @@ const clinicName = clinic.name;
         emptyState.classList.add('hidden');
 
         try {
-          const response = await fetch(`${googleSheetsScriptUrl}?action=getAll&secret=${encodeURIComponent(adminPassword)}`);
+          const response = await fetch(`${supabaseUrl}/rest/v1/bookings?select=*`, {
+            headers: {
+              'apikey': supabaseAnonKey,
+              'Authorization': `Bearer ${supabaseAnonKey}`
+            }
+          });
           if (!response.ok) throw new Error('API server returned error');
           const data = await response.json();
 
-          if (data.error) {
-            showError(data.error);
-            return;
-          }
+          // Map database rows back to frontend properties
+          bookingsData = (data || []).map(row => ({
+            appointmentId: row.appointment_id,
+            firstName: row.first_name,
+            lastName: row.last_name,
+            phone: row.phone,
+            email: row.email,
+            service: row.service,
+            date: row.date,
+            time: row.time,
+            message: row.message,
+            status: row.status,
+            timestamp: row.created_at
+          }));
 
-          bookingsData = data.bookings || [];
           renderDashboard();
         } catch (err) {
           console.error(err);
-          showError("Could not retrieve bookings. Ensure Apps Script is updated and deployed as a Web App.");
+          showError("Could not retrieve bookings from Supabase database.");
         } finally {
           loadingState.classList.add('hidden');
         }
       };
 
       const updateBookingAPI = async (appointmentId, updates) => {
-        if (!googleSheetsScriptUrl) return false;
+        if (!supabaseUrl || !supabaseAnonKey) return false;
         
         try {
-          const payload = {
-            action: 'update',
-            secret: adminPassword,
-            appointmentId,
-            ...updates
-          };
+          const dbUpdates = {};
+          if (updates.status !== undefined) dbUpdates.status = updates.status;
+          if (updates.date !== undefined) dbUpdates.date = updates.date;
+          if (updates.time !== undefined) dbUpdates.time = updates.time;
 
-          const response = await fetch(googleSheetsScriptUrl, {
-            method: 'POST',
+          const response = await fetch(`${supabaseUrl}/rest/v1/bookings?appointment_id=eq.${appointmentId}`, {
+            method: 'PATCH',
             headers: {
-              'Content-Type': 'text/plain',
+              'apikey': supabaseAnonKey,
+              'Authorization': `Bearer ${supabaseAnonKey}`,
+              'Content-Type': 'application/json'
             },
-            body: JSON.stringify(payload)
+            body: JSON.stringify(dbUpdates)
           });
 
           if (!response.ok) throw new Error('Update failed');
-          const result = await response.json();
-          if (result.error) throw new Error(result.error);
-
           return true;
         } catch (err) {
           console.error(err);
@@ -822,6 +863,8 @@ const clinicName = clinic.name;
 
           return true;
         });
+
+        filteredBookings = filtered;
 
         if (filtered.length === 0) {
           emptyState.classList.remove('hidden');
@@ -1066,6 +1109,58 @@ const clinicName = clinic.name;
             console.error('Clipboard copy failed:', err);
             alert('Failed to copy message to clipboard.');
           }
+        });
+      }
+
+      // Download CSV click handler
+      if (downloadCsvBtn) {
+        downloadCsvBtn.addEventListener('click', () => {
+          if (filteredBookings.length === 0) {
+            alert("No bookings to export.");
+            return;
+          }
+
+          // CSV Headers
+          const headers = ["Appointment ID", "First Name", "Last Name", "Phone", "Email", "Service", "Date", "Time", "Status", "Notes", "Created At"];
+          
+          // CSV Rows
+          const escapeCsvVal = (val) => {
+            if (val === null || val === undefined) return '';
+            const str = String(val);
+            if (str.includes(',') || str.includes('"') || str.includes('\n')) {
+              return `"${str.replace(/"/g, '""')}"`;
+            }
+            return str;
+          };
+
+          const csvRows = [
+            headers.join(','),
+            ...filteredBookings.map(b => [
+              escapeCsvVal(b.appointmentId),
+              escapeCsvVal(b.firstName),
+              escapeCsvVal(b.lastName),
+              escapeCsvVal(b.phone),
+              escapeCsvVal(b.email),
+              escapeCsvVal(b.service),
+              escapeCsvVal(b.date),
+              escapeCsvVal(b.time),
+              escapeCsvVal(b.status),
+              escapeCsvVal(b.message),
+              escapeCsvVal(b.timestamp)
+            ].join(','))
+          ];
+
+          const csvContent = csvRows.join("\n");
+          const blob = new Blob([csvContent], { type: 'text/csv;charset=utf-8;' });
+          const url = URL.createObjectURL(blob);
+          const link = document.createElement("a");
+          link.setAttribute("href", url);
+          const dateStr = new Date().toISOString().split('T')[0];
+          link.setAttribute("download", `aquasmile_bookings_${dateStr}.csv`);
+          document.body.appendChild(link);
+          link.click();
+          document.body.removeChild(link);
+          URL.revokeObjectURL(url);
         });
       }
 

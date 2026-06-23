@@ -259,7 +259,7 @@ import Icon from './Icon.astro';
     </div>
   </div>
 
-  <script define:vars={{ whatsappNumber: clinic.whatsappNumber, googleSheetsScriptUrl: clinic.googleSheetsScriptUrl }}>
+  <script define:vars={{ whatsappNumber: clinic.whatsappNumber, supabaseUrl: clinic.supabaseUrl, supabaseAnonKey: clinic.supabaseAnonKey }}>
     // Set date input min attribute to today's date in Indian Standard Time (GMT+5:30)
     const getIndianDateString = () => {
       const now = new Date();
@@ -284,7 +284,7 @@ import Icon from './Icon.astro';
     const timeSelect = document.querySelector('select[name="appointmentTime"]');
     const originalOptionTexts = timeSelect ? Array.from(timeSelect.options).map(opt => opt.textContent) : [];
 
-    // Fetch and update unavailable slots from the Google Sheet
+    // Fetch and update unavailable slots from Supabase
     const updateAvailableSlots = async (selectedDate) => {
       if (!selectedDate || !timeSelect) return;
 
@@ -296,15 +296,20 @@ import Icon from './Icon.astro';
 
       let bookedSlots = [];
       try {
-        if (googleSheetsScriptUrl) {
-          const response = await fetch(`${googleSheetsScriptUrl}?date=${selectedDate}`);
+        if (supabaseUrl && supabaseAnonKey) {
+          const response = await fetch(`${supabaseUrl}/rest/v1/bookings?date=eq.${selectedDate}&status=neq.Cancelled&select=time`, {
+            headers: {
+              'apikey': supabaseAnonKey,
+              'Authorization': `Bearer ${supabaseAnonKey}`
+            }
+          });
           if (response.ok) {
             const data = await response.json();
-            bookedSlots = data.bookedSlots || [];
+            bookedSlots = data.map(item => item.time);
           }
         }
       } catch (err) {
-        console.warn("Could not retrieve availability from sheet:", err);
+        console.warn("Could not retrieve availability from Supabase:", err);
       } finally {
         firstOption.textContent = originalText;
         const todayIST = getIndianDateString();
@@ -468,34 +473,37 @@ import Icon from './Icon.astro';
           form.reset();
         };
 
-        if (googleSheetsScriptUrl) {
-          fetch(googleSheetsScriptUrl, {
+        if (supabaseUrl && supabaseAnonKey) {
+          fetch(`${supabaseUrl}/rest/v1/bookings`, {
             method: 'POST',
             headers: {
-              'Content-Type': 'text/plain',
+              'apikey': supabaseAnonKey,
+              'Authorization': `Bearer ${supabaseAnonKey}`,
+              'Content-Type': 'application/json',
+              'Prefer': 'return=representation'
             },
             body: JSON.stringify({
-              firstName,
-              lastName,
-              phone,
-              email,
-              service,
-              appointmentDate,
-              appointmentTime,
-              message
+              appointment_id: fallbackAppointmentId,
+              first_name: firstName,
+              last_name: lastName,
+              phone: phone,
+              email: email || null,
+              service: service,
+              date: appointmentDate,
+              time: appointmentTime,
+              message: message || null,
+              status: 'Pending'
             })
           })
           .then((response) => {
             if (response.ok) {
+              appointmentId = fallbackAppointmentId;
               return response.json();
             }
             throw new Error('Response not OK');
           })
-          .then((data) => {
-            appointmentId = data.appointmentId || fallbackAppointmentId;
-          })
           .catch((err) => {
-            console.warn('Google Sheets save error or CORS block, using fallback ID:', err);
+            console.warn('Supabase save error, using fallback ID:', err);
             appointmentId = fallbackAppointmentId;
           })
           .finally(() => {
