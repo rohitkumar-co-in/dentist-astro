@@ -75,10 +75,16 @@ const clinicName = clinic.name;
       <main class="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8 mt-8 space-y-8">
         
         <!-- Welcome section -->
-        <div class="flex flex-col gap-1 sm:flex-row sm:items-center sm:justify-between">
+        <div class="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
           <div>
             <h1 class="text-2xl sm:text-3xl font-extrabold text-slate-800 tracking-tight">Appointments Overview</h1>
             <p class="text-sm text-[var(--muted)]">Monitor, search, confirm, reschedule or cancel customer bookings.</p>
+          </div>
+          <div>
+            <button id="open-add-modal-btn" class="action-btn-primary min-h-11 justify-center shadow-soft">
+              <svg class="h-5 w-5" fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M12 4v16m8-8H4"/></svg>
+              Add Appointment
+            </button>
           </div>
         </div>
 
@@ -160,8 +166,8 @@ const clinicName = clinic.name;
           <p class="text-sm text-[var(--muted)]">Try adjusting your search terms or filters.</p>
         </div>
 
-        <div id="bookings-list" class="grid gap-6 md:grid-cols-2 lg:grid-cols-3">
-          <!-- Booking cards rendered here dynamically -->
+        <div id="bookings-sections-container" class="space-y-12">
+          <!-- Sections like Today, Tomorrow, Upcoming, Past will be loaded here dynamically -->
         </div>
 
       </main>
@@ -218,6 +224,141 @@ const clinicName = clinic.name;
       </div>
     </div>
 
+    <!-- ──────── ADD APPOINTMENT DIALOG (OVERLAY) ──────── -->
+    <div id="add-appointment-modal" class="hidden fixed inset-0 z-50 flex items-center justify-center bg-slate-900/60 backdrop-blur px-4">
+      <div class="card-elevated max-w-md w-full p-6 space-y-6 max-h-[90vh] overflow-y-auto">
+        <div class="flex items-center justify-between">
+          <h3 class="text-lg font-bold text-slate-800">Add Manual Appointment</h3>
+          <button id="close-add-modal-btn" class="text-slate-400 hover:text-slate-600">
+            <svg class="h-6 w-6" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M6 18L18 6M6 6l12 12"/></svg>
+          </button>
+        </div>
+        <form id="add-appointment-form" class="space-y-4">
+          <div class="grid grid-cols-2 gap-4">
+            <label class="block">
+              <span class="mb-1.5 block text-sm font-medium text-slate-700">First Name</span>
+              <input class="input-field animate-none" type="text" id="add-first-name" placeholder="e.g. Priya" required />
+            </label>
+            <label class="block">
+              <span class="mb-1.5 block text-sm font-medium text-slate-700">Last Name</span>
+              <input class="input-field animate-none" type="text" id="add-last-name" placeholder="e.g. Sharma" required />
+            </label>
+          </div>
+          <label class="block">
+            <span class="mb-1.5 block text-sm font-medium text-slate-700">Phone Number</span>
+            <input class="input-field animate-none" type="tel" id="add-phone" placeholder="98XXX XXXXX" required maxlength="11" />
+          </label>
+          <label class="block">
+            <span class="mb-1.5 block text-sm font-medium text-slate-700">Email (Optional)</span>
+            <input class="input-field animate-none" type="email" id="add-email" placeholder="you@example.com" />
+          </label>
+          <label class="block">
+            <span class="mb-1.5 block text-sm font-medium text-slate-700">Service</span>
+            <select class="input-field animate-none" id="add-service" required>
+              <option value="">Select a treatment…</option>
+              {clinic.services.map((service) => <option value={service.name}>{service.name}</option>)}
+              <option value="Not sure">Not sure yet / Checkup</option>
+            </select>
+          </label>
+          <div class="grid grid-cols-2 gap-4">
+            <label class="block">
+              <span class="mb-1.5 block text-sm font-medium text-slate-700">Date</span>
+              <input class="input-field animate-none" type="date" id="add-date" required />
+            </label>
+            <label class="block">
+              <span class="mb-1.5 block text-sm font-medium text-slate-700">Time Slot</span>
+              <select class="input-field animate-none" id="add-time" required>
+                <option value="">Select slot…</option>
+                <option value="09:30">09:30 AM</option>
+                <option value="10:00">10:00 AM</option>
+                <option value="10:30">10:30 AM</option>
+                <option value="11:00">11:00 AM</option>
+                <option value="11:30">11:30 AM</option>
+                <option value="12:00">12:00 PM</option>
+                <option value="12:30">12:30 PM</option>
+                <option value="13:00">01:00 PM</option>
+                <option value="13:30">01:30 PM</option>
+                <option value="14:00">02:00 PM</option>
+                <option value="14:30">02:30 PM</option>
+                <option value="15:00">03:00 PM</option>
+                <option value="15:30">03:30 PM</option>
+                <option value="16:00">04:00 PM</option>
+                <option value="16:30">04:30 PM</option>
+                <option value="17:00">05:00 PM</option>
+                <option value="17:30">05:30 PM</option>
+                <option value="18:00">06:00 PM</option>
+                <option value="18:30">06:30 PM</option>
+                <option value="19:00">07:00 PM</option>
+                <option value="19:30">07:30 PM</option>
+                <option value="20:00">08:00 PM</option>
+              </select>
+            </label>
+          </div>
+          <label class="block">
+            <span class="mb-1.5 block text-sm font-medium text-slate-700">Message (Optional)</span>
+            <textarea class="input-field min-h-20 resize-y" id="add-message" placeholder="Phone booking notes..."></textarea>
+          </label>
+          <div class="flex items-center gap-3 pt-2">
+            <button type="button" id="cancel-add-btn" class="action-btn-secondary w-1/2 justify-center">Cancel</button>
+            <button type="submit" class="action-btn-primary w-1/2 justify-center">Add Booking</button>
+          </div>
+        </form>
+      </div>
+    </div>
+
+    <!-- ──────── REMINDER COMPOSER DIALOG (OVERLAY) ──────── -->
+    <div id="reminder-modal" class="hidden fixed inset-0 z-50 flex items-center justify-center bg-slate-900/60 backdrop-blur px-4">
+      <div class="card-elevated max-w-md w-full p-6 space-y-6">
+        <div class="flex items-center justify-between">
+          <h3 class="text-lg font-bold text-slate-800">Send Appointment Reminder</h3>
+          <button id="close-reminder-modal-btn" class="text-slate-400 hover:text-slate-600">
+            <svg class="h-6 w-6" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M6 18L18 6M6 6l12 12"/></svg>
+          </button>
+        </div>
+        <div class="space-y-4">
+          <div>
+            <span class="text-xs font-semibold text-slate-400 uppercase tracking-wider block">Patient Details</span>
+            <div class="mt-1 flex flex-wrap gap-x-4 text-sm text-slate-700">
+              <div><span class="text-slate-400">Name:</span> <strong id="reminder-patient-name">-</strong></div>
+              <div><span class="text-slate-400">Phone:</span> <strong id="reminder-patient-phone">-</strong></div>
+              <div id="reminder-patient-email-container"><span class="text-slate-400">Email:</span> <strong id="reminder-patient-email">-</strong></div>
+            </div>
+          </div>
+
+          <label class="block">
+            <span class="mb-1.5 block text-sm font-medium text-slate-700">Message Template</span>
+            <textarea class="input-field min-h-32 resize-y text-sm font-sans" id="reminder-message-text" placeholder="Type reminder message..."></textarea>
+          </label>
+
+          <div class="space-y-2">
+            <span class="text-xs font-semibold text-slate-400 uppercase tracking-wider block">Send Options</span>
+            <div class="grid grid-cols-2 gap-2">
+              <button id="reminder-copy-btn" class="action-btn-secondary py-2.5 text-xs justify-center gap-1.5 hover:bg-slate-50 font-medium">
+                <svg class="h-4 w-4 text-slate-500" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2"/></svg>
+                Copy Text
+              </button>
+              <a id="reminder-sms-btn" target="_blank" rel="noopener noreferrer" class="action-btn-secondary py-2.5 text-xs justify-center gap-1.5 hover:bg-blue-50 hover:text-blue-600 hover:border-blue-200 font-medium">
+                <svg class="h-4 w-4 text-slate-500" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M8 12h.01M12 12h.01M16 12h.01M21 12c0 4.418-4.03 8-9 8a9.863 9.863 0 01-4.255-.949L3 20l1.395-3.72C3.512 15.042 3 13.574 3 12c0-4.418 4.03-8 9-8s9 3.582 9 8z"/></svg>
+                SMS / Text
+              </a>
+              <a id="reminder-email-btn" target="_blank" rel="noopener noreferrer" class="action-btn-secondary py-2.5 text-xs justify-center gap-1.5 hover:bg-indigo-50 hover:text-indigo-600 hover:border-indigo-200 font-medium">
+                <svg class="h-4 w-4 text-slate-500" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M3 8l7.89 5.26a2 2 0 002.22 0L21 8M5 19h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z"/></svg>
+                Send Email
+              </a>
+              <a id="reminder-wa-btn" target="_blank" rel="noopener noreferrer" class="action-btn-secondary py-2.5 text-xs justify-center gap-1.5 hover:bg-emerald-50 hover:text-emerald-600 hover:border-emerald-200 font-medium">
+                <svg class="h-4 w-4 text-slate-500" fill="currentColor" viewBox="0 0 24 24"><path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347zM12 0C5.373 0 0 5.373 0 12c0 2.123.554 4.116 1.527 5.847L.057 23.07a.75.75 0 00.924.924l5.223-1.47A11.945 11.945 0 0012 24c6.627 0 12-5.373 12-12S18.627 0 12 0zm0 22c-1.9 0-3.7-.49-5.264-1.352l-.376-.21-3.902 1.097 1.098-3.9-.21-.378A9.944 9.944 0 012 12C2 6.477 6.477 2 12 2s10 4.477 10 10-4.477 10-10 10z"/></svg>
+                WhatsApp
+              </a>
+            </div>
+          </div>
+
+          <div class="flex items-center gap-3 pt-2">
+            <button type="button" id="cancel-reminder-btn" class="action-btn-secondary w-full justify-center">Close</button>
+          </div>
+        </div>
+      </div>
+    </div>
+
     <!-- ──────── SCRIPT BLOCK ──────── -->
     <script define:vars={{ googleSheetsScriptUrl, adminUsername, adminPassword }}>
       let bookingsData = [];
@@ -238,7 +379,7 @@ const clinicName = clinic.name;
       
       const loadingState = document.getElementById('loading-state');
       const emptyState = document.getElementById('empty-state');
-      const bookingsList = document.getElementById('bookings-list');
+      const bookingsSectionsContainer = document.getElementById('bookings-sections-container');
 
       // Reschedule Modal elements
       const rescheduleModal = document.getElementById('reschedule-modal');
@@ -248,6 +389,144 @@ const clinicName = clinic.name;
       const rescheduleTime = document.getElementById('reschedule-time');
       const closeModalBtn = document.getElementById('close-modal-btn');
       const cancelRescheduleBtn = document.getElementById('cancel-reschedule-btn');
+
+      // Add Appointment Modal elements
+      const addAppointmentModal = document.getElementById('add-appointment-modal');
+      const addAppointmentForm = document.getElementById('add-appointment-form');
+      const openAddModalBtn = document.getElementById('open-add-modal-btn');
+      const closeAddModalBtn = document.getElementById('close-add-modal-btn');
+      const cancelAddBtn = document.getElementById('cancel-add-btn');
+
+      // Reminder Modal elements
+      const reminderModal = document.getElementById('reminder-modal');
+      const closeReminderModalBtn = document.getElementById('close-reminder-modal-btn');
+      const cancelReminderBtn = document.getElementById('cancel-reminder-btn');
+      const reminderPatientName = document.getElementById('reminder-patient-name');
+      const reminderPatientPhone = document.getElementById('reminder-patient-phone');
+      const reminderPatientEmail = document.getElementById('reminder-patient-email');
+      const reminderMessageText = document.getElementById('reminder-message-text');
+      const reminderCopyBtn = document.getElementById('reminder-copy-btn');
+      const reminderSmsBtn = document.getElementById('reminder-sms-btn');
+      const reminderEmailBtn = document.getElementById('reminder-email-btn');
+      const reminderWaBtn = document.getElementById('reminder-wa-btn');
+
+      // Add form fields
+      const addFirstName = document.getElementById('add-first-name');
+      const addLastName = document.getElementById('add-last-name');
+      const addPhone = document.getElementById('add-phone');
+      const addEmail = document.getElementById('add-email');
+      const addService = document.getElementById('add-service');
+      const addDate = document.getElementById('add-date');
+      const addTime = document.getElementById('add-time');
+      const addMessage = document.getElementById('add-message');
+
+      // Set default min date in Indian Standard Time (IST)
+      const getIndianDateString = () => {
+        const now = new Date();
+        const utc = now.getTime() + (now.getTimezoneOffset() * 60000);
+        const ist = new Date(utc + (3600000 * 5.5));
+        const year = ist.getFullYear();
+        const month = String(ist.getMonth() + 1).padStart(2, '0');
+        const day = String(ist.getDate()).padStart(2, '0');
+        return `${year}-${month}-${day}`;
+      };
+
+      if (addDate) {
+        addDate.min = getIndianDateString();
+        addDate.value = getIndianDateString();
+      }
+
+      // Input listeners for manual add names (alphabets only)
+      if (addFirstName) {
+        addFirstName.addEventListener('input', (e) => {
+          e.target.value = e.target.value.replace(/[^A-Za-z]/g, '');
+        });
+      }
+      if (addLastName) {
+        addLastName.addEventListener('input', (e) => {
+          e.target.value = e.target.value.replace(/[^A-Za-z]/g, '');
+        });
+      }
+
+      // Input listener for manual phone formatting (10 digits, XXXXX XXXXX)
+      if (addPhone) {
+        addPhone.addEventListener('input', (e) => {
+          let val = e.target.value.replace(/\D/g, '');
+          if (val.length > 10 && (val.startsWith('91') || val.startsWith('0'))) {
+            if (val.startsWith('91')) val = val.substring(2);
+            else if (val.startsWith('0')) val = val.substring(1);
+          }
+          val = val.substring(0, 10);
+          if (val.length > 5) {
+            e.target.value = val.substring(0, 5) + ' ' + val.substring(5);
+          } else {
+            e.target.value = val;
+          }
+        });
+      }
+
+      // Open / Close modal
+      if (openAddModalBtn) {
+        openAddModalBtn.addEventListener('click', () => {
+          addAppointmentForm.reset();
+          if (addDate) addDate.value = getIndianDateString();
+          addAppointmentModal.classList.remove('hidden');
+        });
+      }
+      if (closeAddModalBtn) closeAddModalBtn.addEventListener('click', () => addAppointmentModal.classList.add('hidden'));
+      if (cancelAddBtn) cancelAddBtn.addEventListener('click', () => addAppointmentModal.classList.add('hidden'));
+
+      // Submit manual booking
+      if (addAppointmentForm) {
+        addAppointmentForm.addEventListener('submit', async (e) => {
+          e.preventDefault();
+          
+          const firstName = addFirstName.value.trim();
+          const lastName = addLastName.value.trim();
+          const phone = addPhone.value.replace(/\s/g, '');
+          const email = addEmail.value.trim();
+          const service = addService.value;
+          const date = addDate.value;
+          const time = addTime.value;
+          const message = addMessage.value.trim();
+
+          addAppointmentModal.classList.add('hidden');
+          loadingState.classList.remove('hidden');
+          bookingsSectionsContainer.classList.add('hidden');
+
+          try {
+            const payload = {
+              firstName,
+              lastName,
+              phone,
+              email,
+              service,
+              appointmentDate: date,
+              appointmentTime: time,
+              message
+            };
+
+            const response = await fetch(googleSheetsScriptUrl, {
+              method: 'POST',
+              headers: {
+                'Content-Type': 'text/plain',
+              },
+              body: JSON.stringify(payload)
+            });
+
+            if (!response.ok) throw new Error('Network response not OK');
+            const res = await response.json();
+            if (res.result !== 'success') throw new Error(res.error || 'Failed to save');
+
+            fetchBookings();
+          } catch (err) {
+            console.error(err);
+            alert(`Failed to add booking: ${err.message}`);
+            loadingState.classList.add('hidden');
+            bookingsSectionsContainer.classList.remove('hidden');
+          }
+        });
+      }
 
       // Username & Password Access Control
       const checkAccess = () => {
@@ -298,7 +577,7 @@ const clinicName = clinic.name;
         }
 
         loadingState.classList.remove('hidden');
-        bookingsList.classList.add('hidden');
+        bookingsSectionsContainer.classList.add('hidden');
         emptyState.classList.add('hidden');
 
         try {
@@ -353,16 +632,15 @@ const clinicName = clinic.name;
       };
 
       const showError = (msg) => {
-        bookingsList.innerHTML = `<div class="card-elevated p-6 text-center text-red-500 border-red-200 bg-red-50/50 col-span-full">
+        bookingsSectionsContainer.innerHTML = `<div class="card-elevated p-6 text-center text-red-500 border-red-200 bg-red-50/50 col-span-full">
           <p class="font-bold">Error</p>
           <p class="text-sm mt-1">${msg}</p>
         </div>`;
-        bookingsList.classList.remove('hidden');
+        bookingsSectionsContainer.classList.remove('hidden');
       };
 
       // Metrics & Render Logic
       const renderDashboard = () => {
-        // Calculate Metrics
         let pending = 0, confirmed = 0, rescheduled = 0, cancelled = 0;
         bookingsData.forEach(b => {
           const status = String(b.status || 'Pending').toLowerCase();
@@ -392,14 +670,116 @@ const clinicName = clinic.name;
         return `${String(displayHr).padStart(2, '0')}:${min} ${ampm}`;
       };
 
-      const getIndianDateString = () => {
-        const now = new Date();
-        const utc = now.getTime() + (now.getTimezoneOffset() * 60000);
-        const ist = new Date(utc + (3600000 * 5.5));
-        const year = ist.getFullYear();
-        const month = String(ist.getMonth() + 1).padStart(2, '0');
-        const day = String(ist.getDate()).padStart(2, '0');
-        return `${year}-${month}-${day}`;
+      const generateCardHtml = (b) => {
+        let statusColorClass = 'border-amber-200 bg-amber-50 text-amber-700';
+        let accentBorder = 'border-l-4 border-l-amber-400';
+        const status = String(b.status || 'Pending').toLowerCase();
+        
+        if (status === 'confirmed') {
+          statusColorClass = 'border-emerald-200 bg-emerald-50 text-emerald-700';
+          accentBorder = 'border-l-4 border-l-emerald-500';
+        } else if (status === 'rescheduled') {
+          statusColorClass = 'border-indigo-200 bg-indigo-50 text-indigo-700';
+          accentBorder = 'border-l-4 border-l-indigo-500';
+        } else if (status === 'cancelled') {
+          statusColorClass = 'border-rose-200 bg-rose-50 text-rose-700';
+          accentBorder = 'border-l-4 border-l-rose-500';
+        }
+
+        const phoneStr = String(b.phone || '');
+        const formattedDateParts = (b.date || '').split('-');
+        const displayDate = formattedDateParts.length === 3 
+          ? `${formattedDateParts[2]}/${formattedDateParts[1]}/${formattedDateParts[0]}`
+          : b.date;
+
+        const time12 = format12Hour(b.time);
+
+        const isActionable = status !== 'cancelled';
+
+        return `
+          <div class="card-elevated p-5 flex flex-col justify-between space-y-4 relative overflow-hidden transition hover:shadow-md ${accentBorder}">
+            <div class="space-y-3">
+              <!-- ID & Status Badge -->
+              <div class="flex items-center justify-between">
+                <span class="text-xs font-bold text-slate-500 font-mono tracking-tight bg-slate-100 px-2.5 py-1 rounded-md">
+                  ${b.appointmentId}
+                </span>
+                <span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-semibold border ${statusColorClass}">
+                  ${b.status || 'Pending'}
+                </span>
+              </div>
+
+              <!-- Patient Basic Info -->
+              <div>
+                <h4 class="text-lg font-bold text-slate-800 leading-tight">${b.firstName} ${b.lastName}</h4>
+                <p class="text-xs text-slate-400 mt-0.5">${new Date(b.timestamp).toLocaleString('en-IN')}</p>
+              </div>
+
+              <div class="w-full border-t border-[var(--border)] opacity-60"></div>
+
+              <!-- Appointment details -->
+              <div class="space-y-1.5 text-sm">
+                <div class="flex items-center justify-between">
+                  <span class="text-slate-400">Preferred Slot:</span>
+                  <span class="font-semibold text-slate-700">${displayDate} @ ${time12}</span>
+                </div>
+                <div class="flex items-center justify-between">
+                  <span class="text-slate-400">Treatment:</span>
+                  <span class="font-medium text-slate-700">${b.service}</span>
+                </div>
+                <div class="flex items-center justify-between">
+                  <span class="text-slate-400">Phone:</span>
+                  <a href="tel:+91${phoneStr}" class="font-semibold text-darkAqua hover:underline">+91 ${phoneStr.substring(0,5)} ${phoneStr.substring(5)}</a>
+                </div>
+                ${b.email ? `
+                <div class="flex items-center justify-between">
+                  <span class="text-slate-400">Email:</span>
+                  <a href="mailto:${b.email}" class="text-darkAqua truncate max-w-[150px] hover:underline">${b.email}</a>
+                </div>` : ''}
+              </div>
+
+              ${b.message ? `
+              <div class="bg-slate-50 rounded-lg p-2.5 text-xs text-slate-500 italic mt-2 border border-slate-100">
+                "${b.message}"
+              </div>` : ''}
+            </div>
+
+            <!-- Button actions -->
+            <div class="pt-4 flex flex-col gap-2">
+              <div class="flex items-center gap-2 font-medium">
+                <button class="action-btn-secondary min-h-10 text-xs py-2 w-full justify-center gap-1.5 hover:bg-indigo-50 hover:border-indigo-200 hover:text-indigo-700 btn-trigger-reminder transition"
+                  data-id="${b.appointmentId}"
+                  data-firstname="${b.firstName}"
+                  data-lastname="${b.lastName}"
+                  data-phone="${phoneStr}"
+                  data-email="${b.email || ''}"
+                  data-date="${displayDate}"
+                  data-time="${time12}"
+                  data-service="${b.service}">
+                  <svg class="h-4 w-4 text-indigo-500" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M15 17h5l-1.405-1.405A2.032 2.032 0 0118 14.158V11a6.002 6.002 0 00-4-5.659V5a2 2 0 10-4 0v.341C7.67 6.165 6 8.388 6 11v3.159c0 .538-.214 1.055-.595 1.436L4 17h5m6 0v1a3 3 0 11-6 0v-1m6 0H9"/></svg>
+                  Remind Client
+                </button>
+                <a href="tel:+91${phoneStr}" class="action-btn-secondary min-h-10 text-xs py-2 px-4 justify-center gap-1.5 hover:bg-slate-50 transition" title="Call Client">
+                  <svg class="h-4 w-4 text-slate-500" fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M3 5a2 2 0 012-2h3.28a1 1 0 01.948.684l1.498 4.493a1 1 0 01-.502 1.21l-2.257 1.13a11.042 11.042 0 005.516 5.516l1.13-2.257a1 1 0 011.21-.502l4.493 1.498a1 1 0 01.684.949V19a2 2 0 01-2 2h-1C9.716 21 3 14.284 3 6V5z"/></svg>
+                  Call
+                </a>
+              </div>
+              ${isActionable ? `
+              <div class="flex items-center gap-2">
+                ${status !== 'confirmed' ? `
+                <button class="action-btn-primary min-h-10 text-xs py-2 w-full bg-emerald-600 hover:bg-emerald-700 justify-center btn-confirm" data-id="${b.appointmentId}">
+                  Confirm
+                </button>` : ''}
+                <button class="action-btn-secondary min-h-10 text-xs py-2 w-full justify-center text-indigo-600 border-indigo-200 bg-indigo-50/20 hover:bg-indigo-50 btn-reschedule" data-id="${b.appointmentId}" data-date="${b.date}" data-time="${b.time}">
+                  Reschedule
+                </button>
+                <button class="action-btn-secondary min-h-10 text-xs py-2 px-3 text-red-600 border-red-200 bg-red-50/20 hover:bg-red-50 btn-cancel" data-id="${b.appointmentId}">
+                  Cancel
+                </button>
+              </div>` : ''}
+            </div>
+          </div>
+        `;
       };
 
       const applyFilters = () => {
@@ -407,6 +787,12 @@ const clinicName = clinic.name;
         const statusVal = filterStatus.value;
         const dateVal = filterDate.value;
         const todayIST = getIndianDateString();
+
+        // Calculate Tomorrow IST
+        const tomorrowDateObj = new Date();
+        const utcTomorrow = tomorrowDateObj.getTime() + (tomorrowDateObj.getTimezoneOffset() * 60000);
+        const istTomorrow = new Date(utcTomorrow + (3600000 * 5.5) + (3600000 * 24));
+        const tomorrowIST = `${istTomorrow.getFullYear()}-${String(istTomorrow.getMonth() + 1).padStart(2, '0')}-${String(istTomorrow.getDate()).padStart(2, '0')}`;
 
         const filtered = bookingsData.filter(b => {
           // Status filter
@@ -439,129 +825,88 @@ const clinicName = clinic.name;
 
         if (filtered.length === 0) {
           emptyState.classList.remove('hidden');
-          bookingsList.classList.add('hidden');
+          bookingsSectionsContainer.classList.add('hidden');
         } else {
           emptyState.classList.add('hidden');
-          bookingsList.innerHTML = '';
-          
+          bookingsSectionsContainer.innerHTML = '';
+
+          // Group Bookings
+          const todayGroup = [];
+          const tomorrowGroup = [];
+          const upcomingGroup = [];
+          const pastGroup = [];
+
           filtered.forEach(b => {
-            const card = document.createElement('div');
-            card.className = 'card-elevated p-5 flex flex-col justify-between space-y-4 relative overflow-hidden transition hover:shadow-md';
+            const bDate = b.date || '';
+            if (bDate === todayIST) todayGroup.push(b);
+            else if (bDate === tomorrowIST) tomorrowGroup.push(b);
+            else if (bDate > todayIST) upcomingGroup.push(b);
+            else pastGroup.push(b);
+          });
+
+          // Sort arrays chronologically by time slot
+          const sortByTime = (arr) => {
+            arr.sort((a, b) => (a.time || '00:00').localeCompare(b.time || '00:00'));
+          };
+
+          sortByTime(todayGroup);
+          sortByTime(tomorrowGroup);
+          sortByTime(upcomingGroup);
+
+          // Past bookings sort by date DESC, then time DESC
+          pastGroup.sort((a, b) => {
+            const dateCompare = (b.date || '').localeCompare(a.date || '');
+            if (dateCompare !== 0) return dateCompare;
+            return (b.time || '').localeCompare(a.time || '');
+          });
+
+          // Renders Helper
+          const renderSection = (title, group, themeColor, collapsible = false, collapsedDefault = false) => {
+            if (group.length === 0) return '';
+            const sectionId = `sec-${title.toLowerCase().replace(/\s/g, '-')}`;
+            let cardsHtml = '';
+            group.forEach(b => {
+              cardsHtml += generateCardHtml(b);
+            });
             
-            // Status Border Accent
-            let statusColorClass = 'border-amber-200 bg-amber-50 text-amber-700';
-            let accentBorder = 'border-l-4 border-l-amber-400';
-            const status = String(b.status || 'Pending').toLowerCase();
-            
-            if (status === 'confirmed') {
-              statusColorClass = 'border-emerald-200 bg-emerald-50 text-emerald-700';
-              accentBorder = 'border-l-4 border-l-emerald-500';
-            } else if (status === 'rescheduled') {
-              statusColorClass = 'border-indigo-200 bg-indigo-50 text-indigo-700';
-              accentBorder = 'border-l-4 border-l-indigo-500';
-            } else if (status === 'cancelled') {
-              statusColorClass = 'border-rose-200 bg-rose-50 text-rose-700';
-              accentBorder = 'border-l-4 border-l-rose-500';
-            }
-
-            card.className += ` ${accentBorder}`;
-
-            // Create WhatsApp Link
-            const phoneStr = String(b.phone || '');
-            const formattedDateParts = (b.date || '').split('-');
-            const displayDate = formattedDateParts.length === 3 
-              ? `${formattedDateParts[2]}/${formattedDateParts[1]}/${formattedDateParts[0]}`
-              : b.date;
-
-            const time12 = format12Hour(b.time);
-
-            const whatsappMessage = encodeURIComponent([
-              `Hi ${b.firstName}, relative to your booking request ${b.appointmentId} at AquaSmile Clinic.`,
-              `Preferred Slot: ${displayDate} at ${time12}`,
-              `Status: ${b.status || 'Pending'}`
-            ].join('\n'));
-
-            const isActionable = status !== 'cancelled';
-
-            card.innerHTML = `
-              <div class="space-y-3">
-                <!-- ID & Status Badge -->
-                <div class="flex items-center justify-between">
-                  <span class="text-xs font-bold text-slate-500 font-mono tracking-tight bg-slate-100 px-2.5 py-1 rounded-md">
-                    ${b.appointmentId}
-                  </span>
-                  <span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-semibold border ${statusColorClass}">
-                    ${b.status || 'Pending'}
-                  </span>
-                </div>
-
-                <!-- Patient Basic Info -->
-                <div>
-                  <h4 class="text-lg font-bold text-slate-800 leading-tight">${b.firstName} ${b.lastName}</h4>
-                  <p class="text-xs text-slate-400 mt-0.5">${new Date(b.timestamp).toLocaleString('en-IN')}</p>
-                </div>
-
-                <div class="w-full border-t border-[var(--border)] opacity-60"></div>
-
-                <!-- Appointment details -->
-                <div class="space-y-1.5 text-sm">
-                  <div class="flex items-center justify-between">
-                    <span class="text-slate-400">Preferred Slot:</span>
-                    <span class="font-semibold text-slate-700">${displayDate} @ ${time12}</span>
+            return `
+              <div class="space-y-4" id="${sectionId}-parent">
+                <div class="flex items-center justify-between border-b border-[var(--border)] pb-2 cursor-pointer select-none" id="toggle-${sectionId}">
+                  <div class="flex items-center gap-2">
+                    <span class="h-3.5 w-3.5 rounded-full ${themeColor}"></span>
+                    <h2 class="text-lg font-bold text-slate-800">${title} (${group.length})</h2>
                   </div>
-                  <div class="flex items-center justify-between">
-                    <span class="text-slate-400">Treatment:</span>
-                    <span class="font-medium text-slate-700">${b.service}</span>
-                  </div>
-                  <div class="flex items-center justify-between">
-                    <span class="text-slate-400">Phone:</span>
-                    <a href="tel:+91${phoneStr}" class="font-semibold text-darkAqua hover:underline">+91 ${phoneStr.substring(0,5)} ${phoneStr.substring(5)}</a>
-                  </div>
-                  ${b.email ? `
-                  <div class="flex items-center justify-between">
-                    <span class="text-slate-400">Email:</span>
-                    <a href="mailto:${b.email}" class="text-darkAqua truncate max-w-[150px] hover:underline">${b.email}</a>
-                  </div>` : ''}
+                  ${collapsible ? `
+                  <span class="text-xs font-semibold text-slate-400 hover:text-slate-600 block">
+                    Show / Hide
+                  </span>` : ''}
                 </div>
-
-                ${b.message ? `
-                <div class="bg-slate-50 rounded-lg p-2.5 text-xs text-slate-500 italic mt-2 border border-slate-100">
-                  "${b.message}"
-                </div>` : ''}
-              </div>
-
-              <!-- Button actions -->
-              <div class="pt-4 flex flex-col gap-2">
-                <div class="flex items-center gap-2">
-                  <a href="https://wa.me/91${phoneStr}?text=${whatsappMessage}" target="_blank" rel="noopener,noreferrer" class="action-btn-secondary min-h-10 text-xs py-2 w-full justify-center gap-1.5 hover:bg-emerald-50 hover:border-emerald-200 hover:text-emerald-700 transition">
-                    <svg class="h-4 w-4 fill-current text-emerald-600" viewBox="0 0 24 24"><path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347z"/><path d="M12 0C5.373 0 0 5.373 0 12c0 2.123.554 4.116 1.527 5.847L.057 23.07a.75.75 0 00.924.924l5.223-1.47A11.945 11.945 0 0012 24c6.627 0 12-5.373 12-12S18.627 0 12 0zm0 22c-1.9 0-3.7-.49-5.264-1.352l-.376-.21-3.902 1.097 1.098-3.9-.21-.378A9.944 9.944 0 012 12C2 6.477 6.477 2 12 2s10 4.477 10 10-4.477 10-10 10z"/></svg>
-                    WhatsApp Chat
-                  </a>
-                  <a href="tel:+91${phoneStr}" class="action-btn-secondary min-h-10 text-xs py-2 w-full justify-center gap-1.5 hover:bg-slate-50 transition">
-                    <svg class="h-4 w-4 text-slate-500" fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M3 5a2 2 0 012-2h3.28a1 1 0 01.948.684l1.498 4.493a1 1 0 01-.502 1.21l-2.257 1.13a11.042 11.042 0 005.516 5.516l1.13-2.257a1 1 0 011.21-.502l4.493 1.498a1 1 0 01.684.949V19a2 2 0 01-2 2h-1C9.716 21 3 14.284 3 6V5z"/></svg>
-                    Call Client
-                  </a>
+                <div id="${sectionId}-grid" class="grid gap-6 md:grid-cols-2 lg:grid-cols-3 ${collapsedDefault ? 'hidden' : ''}">
+                  ${cardsHtml}
                 </div>
-                ${isActionable ? `
-                <div class="flex items-center gap-2">
-                  ${status !== 'confirmed' ? `
-                  <button class="action-btn-primary min-h-10 text-xs py-2 w-full bg-emerald-600 hover:bg-emerald-700 justify-center btn-confirm" data-id="${b.appointmentId}">
-                    Confirm
-                  </button>` : ''}
-                  <button class="action-btn-secondary min-h-10 text-xs py-2 w-full justify-center text-indigo-600 border-indigo-200 bg-indigo-50/20 hover:bg-indigo-50 btn-reschedule" data-id="${b.appointmentId}" data-date="${b.date}" data-time="${b.time}">
-                    Reschedule
-                  </button>
-                  <button class="action-btn-secondary min-h-10 text-xs py-2 px-3 text-red-600 border-red-200 bg-red-50/20 hover:bg-red-50 btn-cancel" data-id="${b.appointmentId}">
-                    Cancel
-                  </button>
-                </div>` : ''}
               </div>
             `;
-            
-            bookingsList.appendChild(card);
+          };
+
+          // Append Sections
+          bookingsSectionsContainer.innerHTML += renderSection("Today's Schedule", todayGroup, "bg-emerald-500");
+          bookingsSectionsContainer.innerHTML += renderSection("Tomorrow's Schedule", tomorrowGroup, "bg-indigo-500");
+          bookingsSectionsContainer.innerHTML += renderSection("Upcoming Bookings", upcomingGroup, "bg-sky-500");
+          bookingsSectionsContainer.innerHTML += renderSection("Past Appointments", pastGroup, "bg-slate-400", true, true);
+
+          bookingsSectionsContainer.classList.remove('hidden');
+
+          // Hook Collapsible listeners
+          ["Today's Schedule", "Tomorrow's Schedule", "Upcoming Bookings", "Past Appointments"].forEach(title => {
+            const sectionId = `sec-${title.toLowerCase().replace(/\s/g, '-')}`;
+            const header = document.getElementById(`toggle-${sectionId}`);
+            const grid = document.getElementById(`${sectionId}-grid`);
+            if (header && grid) {
+              header.addEventListener('click', () => {
+                grid.classList.toggle('hidden');
+              });
+            }
           });
-          
-          bookingsList.classList.remove('hidden');
 
           // Hook Button Listeners
           document.querySelectorAll('.btn-confirm').forEach(btn => {
@@ -594,6 +939,44 @@ const clinicName = clinic.name;
               rescheduleModal.classList.remove('hidden');
             });
           });
+
+          document.querySelectorAll('.btn-trigger-reminder').forEach(btn => {
+            btn.addEventListener('click', (e) => {
+              const dataset = e.currentTarget.dataset;
+              const name = `${dataset.firstname} ${dataset.lastname}`;
+              const phone = dataset.phone;
+              const email = dataset.email;
+              const date = dataset.date;
+              const time = dataset.time;
+              const service = dataset.service;
+
+              // Populate modal fields
+              reminderPatientName.textContent = name;
+              reminderPatientPhone.textContent = `+91 ${phone.substring(0,5)} ${phone.substring(5)}`;
+              
+              if (email) {
+                reminderPatientEmail.textContent = email;
+                document.getElementById('reminder-patient-email-container').classList.remove('hidden');
+              } else {
+                reminderPatientEmail.textContent = '';
+                document.getElementById('reminder-patient-email-container').classList.add('hidden');
+              }
+
+              // Prefill message template
+              const message = `Hi ${dataset.firstname}, this is a friendly reminder for your upcoming appointment at AquaSmile Clinic.\nScheduled Slot: ${date} at ${time} for ${service}.\nLooking forward to seeing you soon!`;
+              reminderMessageText.value = message;
+              
+              // Store phone and email as data attributes on textarea
+              reminderMessageText.dataset.phone = phone;
+              reminderMessageText.dataset.email = email;
+
+              // Update initial link href values
+              updateReminderLinks();
+
+              // Open Modal
+              reminderModal.classList.remove('hidden');
+            });
+          });
         }
       };
 
@@ -609,7 +992,7 @@ const clinicName = clinic.name;
 
         rescheduleModal.classList.add('hidden');
         loadingState.classList.remove('hidden');
-        bookingsList.classList.add('hidden');
+        bookingsSectionsContainer.classList.add('hidden');
 
         const success = await updateBookingAPI(id, {
           status: 'Rescheduled',
@@ -621,9 +1004,70 @@ const clinicName = clinic.name;
           fetchBookings();
         } else {
           loadingState.classList.add('hidden');
-          bookingsList.classList.remove('hidden');
+          bookingsSectionsContainer.classList.remove('hidden');
         }
       });
+
+      // Reminder Modal Operations
+      const updateReminderLinks = () => {
+        const text = encodeURIComponent(reminderMessageText.value);
+        const phone = reminderMessageText.dataset.phone || '';
+        const email = reminderMessageText.dataset.email || '';
+
+        // SMS Link (support standard scheme, with separator fallback for iOS)
+        const isIOS = /iPad|iPhone|iPod/.test(navigator.userAgent);
+        const smsSeparator = isIOS ? '&' : '?';
+        reminderSmsBtn.href = `sms:+91${phone}${smsSeparator}body=${text}`;
+
+        // Email Link
+        if (email) {
+          reminderEmailBtn.href = `mailto:${email}?subject=Appointment%20Reminder%20-%20AquaSmile%20Clinic&body=${text}`;
+          reminderEmailBtn.classList.remove('opacity-50', 'pointer-events-none', 'cursor-not-allowed');
+        } else {
+          reminderEmailBtn.removeAttribute('href');
+          reminderEmailBtn.classList.add('opacity-50', 'pointer-events-none', 'cursor-not-allowed');
+        }
+
+        // WhatsApp Link
+        reminderWaBtn.href = `https://wa.me/91${phone}?text=${text}`;
+      };
+
+      // Close handlers
+      if (closeReminderModalBtn) {
+        closeReminderModalBtn.addEventListener('click', () => reminderModal.classList.add('hidden'));
+      }
+      if (cancelReminderBtn) {
+        cancelReminderBtn.addEventListener('click', () => reminderModal.classList.add('hidden'));
+      }
+
+      // Input listener on template textarea to update links in real time
+      if (reminderMessageText) {
+        reminderMessageText.addEventListener('input', updateReminderLinks);
+      }
+
+      // Copy text button click with visual state change animation
+      if (reminderCopyBtn) {
+        reminderCopyBtn.addEventListener('click', async () => {
+          try {
+            await navigator.clipboard.writeText(reminderMessageText.value);
+            const originalHtml = reminderCopyBtn.innerHTML;
+            reminderCopyBtn.innerHTML = `
+              <svg class="h-4 w-4 text-emerald-500" fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M5 13l4 4L19 7"/></svg>
+              <span>Copied!</span>
+            `;
+            reminderCopyBtn.classList.remove('hover:bg-slate-50');
+            reminderCopyBtn.classList.add('border-emerald-200', 'bg-emerald-50', 'text-emerald-700');
+            setTimeout(() => {
+              reminderCopyBtn.innerHTML = originalHtml;
+              reminderCopyBtn.classList.add('hover:bg-slate-50');
+              reminderCopyBtn.classList.remove('border-emerald-200', 'bg-emerald-50', 'text-emerald-700');
+            }, 2000);
+          } catch (err) {
+            console.error('Clipboard copy failed:', err);
+            alert('Failed to copy message to clipboard.');
+          }
+        });
+      }
 
       // Filter change listeners
       searchInput.addEventListener('input', applyFilters);
