@@ -27,7 +27,9 @@ export const clinic = {
   email: 'hello@aquasmile.example',
   address: '2nd Floor, Aqua Arcade, Link Road, Andheri West, Mumbai, Maharashtra 400053',
   googleMapsQuery: 'AquaSmile Dental Clinic Andheri West Mumbai',
-  googleSheetsScriptUrl: 'https://script.google.com/macros/s/AKfycbykZWxHB6nSNagRADo8e7_jcJNKqtmIG4wAVbl1y9jtrz-v3sIzQEJspkCeNxH5asLrQQ/exec', // Add Google Sheets Apps Script Web App URL here to save appointment data
+  googleSheetsScriptUrl: import.meta.env.PUBLIC_GOOGLE_SHEETS_SCRIPT_URL || '', // Configured via environment variable
+  adminUsername: import.meta.env.PUBLIC_ADMIN_USERNAME || 'admin', // Configured via environment variable
+  adminPassword: import.meta.env.PUBLIC_ADMIN_PASSWORD || 'AquaSmileAdmin2026', // Configured via environment variable
 
   /** Instagram, Facebook profile URLs */
   instagramUrl: 'https://instagram.com',
@@ -167,17 +169,17 @@ export const clinic = {
 
 /* ─── Navigation (labels only — hrefs are anchor links, don't change) ─── */
 export const navigationLinks = [
-  { label: 'Home',     href: '/' },
-  { label: 'About',    href: '#about' },
+  { label: 'Home', href: '/' },
+  { label: 'About', href: '#about' },
   { label: 'Services', href: '#services' },
-  { label: 'Reviews',  href: '#reviews' },
-  { label: 'Contact',  href: '#contact' },
+  { label: 'Reviews', href: '#reviews' },
+  { label: 'Contact', href: '#contact' },
 ];
 
 /* ─── Social links (driven from clinic config above) ─── */
 export const socialLinks = [
   { label: 'Instagram', href: clinic.instagramUrl, icon: 'instagram' },
-  { label: 'Facebook',  href: clinic.facebookUrl,  icon: 'facebook' },
+  { label: 'Facebook', href: clinic.facebookUrl, icon: 'facebook' },
   {
     label: 'WhatsApp',
     href: `https://wa.me/${clinic.whatsappNumber}?text=${encodeURIComponent("Hi, I'd like to book an appointment.")}`,

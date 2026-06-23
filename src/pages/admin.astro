@@ -1,0 +1,637 @@
+---
+import '../styles/global.css';
+import { clinic } from '../lib/site';
+
+const googleSheetsScriptUrl = clinic.googleSheetsScriptUrl;
+const adminUsername = clinic.adminUsername;
+const adminPassword = clinic.adminPassword;
+const clinicName = clinic.name;
+---
+
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>Owner Dashboard | {clinicName}</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin="anonymous" />
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=Poppins:wght@500;600;700;800&display=swap" rel="stylesheet" />
+    <meta name="theme-color" content="#00B4D8" />
+  </head>
+  <body class="min-h-screen bg-[var(--surface)] text-[var(--text)] font-sans antialiased pb-12">
+    
+    <!-- ──────── LOGIN MODAL ──────── -->
+    <div id="login-container" class="min-h-screen flex items-center justify-center px-4">
+      <div class="card-elevated max-w-md w-full p-6 sm:p-8 text-center space-y-6">
+        <span class="flex h-16 w-16 items-center justify-center rounded-full bg-paleAqua text-darkAqua mx-auto ring-8 ring-paleAqua/50">
+          <svg class="h-8 w-8" fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z"/></svg>
+        </span>
+        <div>
+          <h2 class="text-2xl font-extrabold tracking-tight text-darkAqua">Clinic Admin Login</h2>
+          <p class="mt-2 text-sm text-[var(--muted)]">Enter the admin password to manage booking records.</p>
+        </div>
+        <form id="login-form" class="space-y-4">
+          <div>
+            <input class="input-field text-center" type="text" id="admin-user" placeholder="Username" required />
+          </div>
+          <div>
+            <input class="input-field text-center" type="password" id="admin-pass" placeholder="Password" required />
+          </div>
+          <button type="submit" class="action-btn-primary w-full min-h-12 text-base justify-center">
+            Access Dashboard
+          </button>
+          <p id="login-error" class="hidden text-xs text-red-500 mt-2 font-medium"></p>
+        </form>
+      </div>
+    </div>
+
+    <!-- ──────── DASHBOARD CONTAINER ──────── -->
+    <div id="dashboard-container" class="hidden">
+      <!-- Navbar -->
+      <nav class="sticky top-0 z-40 border-b border-[var(--border)] bg-white/90 shadow-sm backdrop-blur">
+        <div class="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8 h-16 flex items-center justify-between">
+          <div class="flex items-center gap-3">
+            <span class="flex h-10 w-10 items-center justify-center rounded-[12px] bg-paleAqua text-darkAqua">
+              <svg class="h-6 w-6" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z"/></svg>
+            </span>
+            <div>
+              <span class="text-xs font-semibold text-darkAqua uppercase tracking-wider block leading-none">Management</span>
+              <span class="text-base font-bold text-slate-800 leading-none">{clinicName}</span>
+            </div>
+          </div>
+          <div class="flex items-center gap-3">
+            <button id="refresh-btn" class="action-btn-secondary min-h-10 px-3 hover:bg-slate-50" title="Refresh Data">
+              <svg class="h-4 w-4" fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M4 4v5h.582m15.356 2A8.001 8.001 0 1121.21 7.89M9 11l3-3 3 3m-3-3v12"/></svg>
+            </button>
+            <button id="logout-btn" class="action-btn min-h-10 px-4 text-sm font-semibold border border-red-200 bg-red-50 text-red-600 hover:bg-red-100 transition rounded-[12px]">
+              Logout
+            </button>
+          </div>
+        </div>
+      </nav>
+
+      <!-- Main Layout -->
+      <main class="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8 mt-8 space-y-8">
+        
+        <!-- Welcome section -->
+        <div class="flex flex-col gap-1 sm:flex-row sm:items-center sm:justify-between">
+          <div>
+            <h1 class="text-2xl sm:text-3xl font-extrabold text-slate-800 tracking-tight">Appointments Overview</h1>
+            <p class="text-sm text-[var(--muted)]">Monitor, search, confirm, reschedule or cancel customer bookings.</p>
+          </div>
+        </div>
+
+        <!-- Metrics cards -->
+        <div class="grid grid-cols-2 md:grid-cols-5 gap-4">
+          <!-- Card Total -->
+          <div class="card-elevated p-4 flex flex-col justify-between min-h-24">
+            <span class="text-xs font-semibold text-slate-400 uppercase tracking-wider">Total Bookings</span>
+            <span class="text-3xl font-black text-slate-800 mt-2" id="metric-total">0</span>
+          </div>
+          <!-- Card Pending -->
+          <div class="card-elevated p-4 border-amber-200 bg-amber-50/30 flex flex-col justify-between min-h-24">
+            <span class="text-xs font-semibold text-amber-600 uppercase tracking-wider">Pending</span>
+            <span class="text-3xl font-black text-amber-600 mt-2" id="metric-pending">0</span>
+          </div>
+          <!-- Card Confirmed -->
+          <div class="card-elevated p-4 border-emerald-200 bg-emerald-50/30 flex flex-col justify-between min-h-24">
+            <span class="text-xs font-semibold text-emerald-600 uppercase tracking-wider">Confirmed</span>
+            <span class="text-3xl font-black text-emerald-600 mt-2" id="metric-confirmed">0</span>
+          </div>
+          <!-- Card Rescheduled -->
+          <div class="card-elevated p-4 border-indigo-200 bg-indigo-50/30 flex flex-col justify-between min-h-24">
+            <span class="text-xs font-semibold text-indigo-600 uppercase tracking-wider">Rescheduled</span>
+            <span class="text-3xl font-black text-indigo-600 mt-2" id="metric-rescheduled">0</span>
+          </div>
+          <!-- Card Cancelled -->
+          <div class="card-elevated p-4 border-rose-200 bg-rose-50/30 flex flex-col justify-between min-h-24">
+            <span class="text-xs font-semibold text-rose-600 uppercase tracking-wider">Cancelled</span>
+            <span class="text-3xl font-black text-rose-600 mt-2" id="metric-cancelled">0</span>
+          </div>
+        </div>
+
+        <!-- Search & Filter Controls -->
+        <div class="card-elevated p-4 flex flex-col gap-4 md:flex-row md:items-center justify-between">
+          <!-- Search box -->
+          <div class="relative flex-1">
+            <span class="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none text-slate-400">
+              <svg class="h-5 w-5" fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"/></svg>
+            </span>
+            <input class="input-field pl-10" type="text" id="search-input" placeholder="Search by name, phone, service, ID..." />
+          </div>
+          <!-- Filters -->
+          <div class="flex flex-wrap items-center gap-3">
+            <div class="w-40">
+              <select class="input-field py-2" id="filter-status">
+                <option value="ALL">All Statuses</option>
+                <option value="Pending">Pending</option>
+                <option value="Confirmed">Confirmed</option>
+                <option value="Rescheduled">Rescheduled</option>
+                <option value="Cancelled">Cancelled</option>
+              </select>
+            </div>
+            <div class="w-40">
+              <select class="input-field py-2" id="filter-date">
+                <option value="ALL">All Dates</option>
+                <option value="TODAY">Today</option>
+                <option value="FUTURE">Upcoming</option>
+                <option value="PAST">Past Dates</option>
+              </select>
+            </div>
+          </div>
+        </div>
+
+        <!-- Bookings listing area -->
+        <div id="loading-state" class="flex flex-col items-center justify-center py-20 text-slate-500">
+          <!-- Spin Loader SVG -->
+          <svg class="animate-spin h-10 w-10 text-darkAqua mb-4" fill="none" viewBox="0 0 24 24">
+            <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle>
+            <path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
+          </svg>
+          <span class="font-medium text-sm">Fetching appointments from Google Sheets...</span>
+        </div>
+
+        <div id="empty-state" class="hidden card-elevated p-12 text-center text-slate-500 space-y-4">
+          <span class="flex h-12 w-12 items-center justify-center rounded-full bg-slate-100 text-slate-400 mx-auto">
+            <svg class="h-6 w-6" fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M9.172 16.172a4 4 0 015.656 0M9 10h.01M15 10h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"/></svg>
+          </span>
+          <h3 class="text-lg font-bold text-slate-800">No appointments found</h3>
+          <p class="text-sm text-[var(--muted)]">Try adjusting your search terms or filters.</p>
+        </div>
+
+        <div id="bookings-list" class="grid gap-6 md:grid-cols-2 lg:grid-cols-3">
+          <!-- Booking cards rendered here dynamically -->
+        </div>
+
+      </main>
+    </div>
+
+    <!-- ──────── RESCHEDULE INLINE DIALOG (OVERLAY) ──────── -->
+    <div id="reschedule-modal" class="hidden fixed inset-0 z-50 flex items-center justify-center bg-slate-900/60 backdrop-blur px-4">
+      <div class="card-elevated max-w-md w-full p-6 space-y-6">
+        <div class="flex items-center justify-between">
+          <h3 class="text-lg font-bold text-slate-800">Reschedule Appointment</h3>
+          <button id="close-modal-btn" class="text-slate-400 hover:text-slate-600">
+            <svg class="h-6 w-6" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M6 18L18 6M6 6l12 12"/></svg>
+          </button>
+        </div>
+        <form id="reschedule-form" class="space-y-4">
+          <input type="hidden" id="reschedule-id" />
+          <label class="block">
+            <span class="mb-1.5 block text-sm font-medium text-slate-700">New Date</span>
+            <input class="input-field" type="date" id="reschedule-date" required />
+          </label>
+          <label class="block">
+            <span class="mb-1.5 block text-sm font-medium text-slate-700">New Time Slot</span>
+            <select class="input-field" id="reschedule-time" required>
+              <option value="">Select a time slot…</option>
+              <option value="09:30">09:30 AM</option>
+              <option value="10:00">10:00 AM</option>
+              <option value="10:30">10:30 AM</option>
+              <option value="11:00">11:00 AM</option>
+              <option value="11:30">11:30 AM</option>
+              <option value="12:00">12:00 PM</option>
+              <option value="12:30">12:30 PM</option>
+              <option value="13:00">01:00 PM</option>
+              <option value="13:30">01:30 PM</option>
+              <option value="14:00">02:00 PM</option>
+              <option value="14:30">02:30 PM</option>
+              <option value="15:00">03:00 PM</option>
+              <option value="15:30">03:30 PM</option>
+              <option value="16:00">04:00 PM</option>
+              <option value="16:30">04:30 PM</option>
+              <option value="17:00">05:00 PM</option>
+              <option value="17:30">05:30 PM</option>
+              <option value="18:00">06:00 PM</option>
+              <option value="18:30">06:30 PM</option>
+              <option value="19:00">07:00 PM</option>
+              <option value="19:30">07:30 PM</option>
+              <option value="20:00">08:00 PM</option>
+            </select>
+          </label>
+          <div class="flex items-center gap-3 pt-2">
+            <button type="button" id="cancel-reschedule-btn" class="action-btn-secondary w-1/2 justify-center">Cancel</button>
+            <button type="submit" class="action-btn-primary w-1/2 justify-center">Save Changes</button>
+          </div>
+        </form>
+      </div>
+    </div>
+
+    <!-- ──────── SCRIPT BLOCK ──────── -->
+    <script define:vars={{ googleSheetsScriptUrl, adminUsername, adminPassword }}>
+      let bookingsData = [];
+
+      const loginContainer = document.getElementById('login-container');
+      const dashboardContainer = document.getElementById('dashboard-container');
+      const loginForm = document.getElementById('login-form');
+      const adminUserInput = document.getElementById('admin-user');
+      const adminPassInput = document.getElementById('admin-pass');
+      const loginError = document.getElementById('login-error');
+      
+      const refreshBtn = document.getElementById('refresh-btn');
+      const logoutBtn = document.getElementById('logout-btn');
+      
+      const searchInput = document.getElementById('search-input');
+      const filterStatus = document.getElementById('filter-status');
+      const filterDate = document.getElementById('filter-date');
+      
+      const loadingState = document.getElementById('loading-state');
+      const emptyState = document.getElementById('empty-state');
+      const bookingsList = document.getElementById('bookings-list');
+
+      // Reschedule Modal elements
+      const rescheduleModal = document.getElementById('reschedule-modal');
+      const rescheduleForm = document.getElementById('reschedule-form');
+      const rescheduleId = document.getElementById('reschedule-id');
+      const rescheduleDate = document.getElementById('reschedule-date');
+      const rescheduleTime = document.getElementById('reschedule-time');
+      const closeModalBtn = document.getElementById('close-modal-btn');
+      const cancelRescheduleBtn = document.getElementById('cancel-reschedule-btn');
+
+      // Username & Password Access Control
+      const checkAccess = () => {
+        const storedUser = localStorage.getItem('clinic_admin_user');
+        const storedPass = localStorage.getItem('clinic_admin_pass');
+        if (storedUser === adminUsername && storedPass === adminPassword) {
+          loginContainer.classList.add('hidden');
+          dashboardContainer.classList.remove('hidden');
+          fetchBookings();
+        } else {
+          loginContainer.classList.remove('hidden');
+          dashboardContainer.classList.add('hidden');
+        }
+      };
+
+      loginForm.addEventListener('submit', (e) => {
+        e.preventDefault();
+        const userVal = adminUserInput.value.trim();
+        const passVal = adminPassInput.value.trim();
+        if (userVal === adminUsername && passVal === adminPassword) {
+          localStorage.setItem('clinic_admin_user', userVal);
+          localStorage.setItem('clinic_admin_pass', passVal);
+          loginError.classList.add('hidden');
+          checkAccess();
+        } else {
+          loginError.textContent = 'Incorrect username or password. Please try again.';
+          loginError.classList.remove('hidden');
+        }
+      });
+
+      logoutBtn.addEventListener('click', () => {
+        localStorage.removeItem('clinic_admin_user');
+        localStorage.removeItem('clinic_admin_pass');
+        if (adminUserInput) adminUserInput.value = '';
+        if (adminPassInput) adminPassInput.value = '';
+        checkAccess();
+      });
+
+      refreshBtn.addEventListener('click', () => {
+        fetchBookings();
+      });
+
+      // API Actions
+      const fetchBookings = async () => {
+        if (!googleSheetsScriptUrl) {
+          showError("Google Sheets App Script URL is not configured.");
+          return;
+        }
+
+        loadingState.classList.remove('hidden');
+        bookingsList.classList.add('hidden');
+        emptyState.classList.add('hidden');
+
+        try {
+          const response = await fetch(`${googleSheetsScriptUrl}?action=getAll&secret=${encodeURIComponent(adminPassword)}`);
+          if (!response.ok) throw new Error('API server returned error');
+          const data = await response.json();
+
+          if (data.error) {
+            showError(data.error);
+            return;
+          }
+
+          bookingsData = data.bookings || [];
+          renderDashboard();
+        } catch (err) {
+          console.error(err);
+          showError("Could not retrieve bookings. Ensure Apps Script is updated and deployed as a Web App.");
+        } finally {
+          loadingState.classList.add('hidden');
+        }
+      };
+
+      const updateBookingAPI = async (appointmentId, updates) => {
+        if (!googleSheetsScriptUrl) return false;
+        
+        try {
+          const payload = {
+            action: 'update',
+            secret: adminPassword,
+            appointmentId,
+            ...updates
+          };
+
+          const response = await fetch(googleSheetsScriptUrl, {
+            method: 'POST',
+            headers: {
+              'Content-Type': 'text/plain',
+            },
+            body: JSON.stringify(payload)
+          });
+
+          if (!response.ok) throw new Error('Update failed');
+          const result = await response.json();
+          if (result.error) throw new Error(result.error);
+
+          return true;
+        } catch (err) {
+          console.error(err);
+          alert(`Failed to update booking: ${err.message}`);
+          return false;
+        }
+      };
+
+      const showError = (msg) => {
+        bookingsList.innerHTML = `<div class="card-elevated p-6 text-center text-red-500 border-red-200 bg-red-50/50 col-span-full">
+          <p class="font-bold">Error</p>
+          <p class="text-sm mt-1">${msg}</p>
+        </div>`;
+        bookingsList.classList.remove('hidden');
+      };
+
+      // Metrics & Render Logic
+      const renderDashboard = () => {
+        // Calculate Metrics
+        let pending = 0, confirmed = 0, rescheduled = 0, cancelled = 0;
+        bookingsData.forEach(b => {
+          const status = String(b.status || 'Pending').toLowerCase();
+          if (status === 'confirmed') confirmed++;
+          else if (status === 'rescheduled') rescheduled++;
+          else if (status === 'cancelled') cancelled++;
+          else pending++;
+        });
+
+        document.getElementById('metric-total').textContent = bookingsData.length;
+        document.getElementById('metric-pending').textContent = pending;
+        document.getElementById('metric-confirmed').textContent = confirmed;
+        document.getElementById('metric-rescheduled').textContent = rescheduled;
+        document.getElementById('metric-cancelled').textContent = cancelled;
+
+        applyFilters();
+      };
+
+      const format12Hour = (timeStr) => {
+        if (!timeStr) return '';
+        const parts = timeStr.split(':');
+        if (parts.length < 2) return timeStr;
+        const hr = parseInt(parts[0], 10);
+        const min = parts[1];
+        const ampm = hr >= 12 ? 'PM' : 'AM';
+        const displayHr = hr % 12 || 12;
+        return `${String(displayHr).padStart(2, '0')}:${min} ${ampm}`;
+      };
+
+      const getIndianDateString = () => {
+        const now = new Date();
+        const utc = now.getTime() + (now.getTimezoneOffset() * 60000);
+        const ist = new Date(utc + (3600000 * 5.5));
+        const year = ist.getFullYear();
+        const month = String(ist.getMonth() + 1).padStart(2, '0');
+        const day = String(ist.getDate()).padStart(2, '0');
+        return `${year}-${month}-${day}`;
+      };
+
+      const applyFilters = () => {
+        const query = searchInput.value.toLowerCase().trim();
+        const statusVal = filterStatus.value;
+        const dateVal = filterDate.value;
+        const todayIST = getIndianDateString();
+
+        const filtered = bookingsData.filter(b => {
+          // Status filter
+          const status = b.status || 'Pending';
+          if (statusVal !== 'ALL' && status.toLowerCase() !== statusVal.toLowerCase()) {
+            return false;
+          }
+
+          // Date filter
+          const bookingDate = b.date || '';
+          if (dateVal === 'TODAY' && bookingDate !== todayIST) return false;
+          if (dateVal === 'FUTURE' && bookingDate <= todayIST) return false;
+          if (dateVal === 'PAST' && bookingDate >= todayIST) return false;
+
+          // Search query matching
+          if (query) {
+            const matchesId = String(b.appointmentId || '').toLowerCase().includes(query);
+            const matchesName = `${b.firstName} ${b.lastName}`.toLowerCase().includes(query);
+            const matchesPhone = String(b.phone || '').includes(query);
+            const matchesService = String(b.service || '').toLowerCase().includes(query);
+            const matchesEmail = String(b.email || '').toLowerCase().includes(query);
+
+            if (!matchesId && !matchesName && !matchesPhone && !matchesService && !matchesEmail) {
+              return false;
+            }
+          }
+
+          return true;
+        });
+
+        if (filtered.length === 0) {
+          emptyState.classList.remove('hidden');
+          bookingsList.classList.add('hidden');
+        } else {
+          emptyState.classList.add('hidden');
+          bookingsList.innerHTML = '';
+          
+          filtered.forEach(b => {
+            const card = document.createElement('div');
+            card.className = 'card-elevated p-5 flex flex-col justify-between space-y-4 relative overflow-hidden transition hover:shadow-md';
+            
+            // Status Border Accent
+            let statusColorClass = 'border-amber-200 bg-amber-50 text-amber-700';
+            let accentBorder = 'border-l-4 border-l-amber-400';
+            const status = String(b.status || 'Pending').toLowerCase();
+            
+            if (status === 'confirmed') {
+              statusColorClass = 'border-emerald-200 bg-emerald-50 text-emerald-700';
+              accentBorder = 'border-l-4 border-l-emerald-500';
+            } else if (status === 'rescheduled') {
+              statusColorClass = 'border-indigo-200 bg-indigo-50 text-indigo-700';
+              accentBorder = 'border-l-4 border-l-indigo-500';
+            } else if (status === 'cancelled') {
+              statusColorClass = 'border-rose-200 bg-rose-50 text-rose-700';
+              accentBorder = 'border-l-4 border-l-rose-500';
+            }
+
+            card.className += ` ${accentBorder}`;
+
+            // Create WhatsApp Link
+            const phoneStr = String(b.phone || '');
+            const formattedDateParts = (b.date || '').split('-');
+            const displayDate = formattedDateParts.length === 3 
+              ? `${formattedDateParts[2]}/${formattedDateParts[1]}/${formattedDateParts[0]}`
+              : b.date;
+
+            const time12 = format12Hour(b.time);
+
+            const whatsappMessage = encodeURIComponent([
+              `Hi ${b.firstName}, relative to your booking request ${b.appointmentId} at AquaSmile Clinic.`,
+              `Preferred Slot: ${displayDate} at ${time12}`,
+              `Status: ${b.status || 'Pending'}`
+            ].join('\n'));
+
+            const isActionable = status !== 'cancelled';
+
+            card.innerHTML = `
+              <div class="space-y-3">
+                <!-- ID & Status Badge -->
+                <div class="flex items-center justify-between">
+                  <span class="text-xs font-bold text-slate-500 font-mono tracking-tight bg-slate-100 px-2.5 py-1 rounded-md">
+                    ${b.appointmentId}
+                  </span>
+                  <span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-semibold border ${statusColorClass}">
+                    ${b.status || 'Pending'}
+                  </span>
+                </div>
+
+                <!-- Patient Basic Info -->
+                <div>
+                  <h4 class="text-lg font-bold text-slate-800 leading-tight">${b.firstName} ${b.lastName}</h4>
+                  <p class="text-xs text-slate-400 mt-0.5">${new Date(b.timestamp).toLocaleString('en-IN')}</p>
+                </div>
+
+                <div class="w-full border-t border-[var(--border)] opacity-60"></div>
+
+                <!-- Appointment details -->
+                <div class="space-y-1.5 text-sm">
+                  <div class="flex items-center justify-between">
+                    <span class="text-slate-400">Preferred Slot:</span>
+                    <span class="font-semibold text-slate-700">${displayDate} @ ${time12}</span>
+                  </div>
+                  <div class="flex items-center justify-between">
+                    <span class="text-slate-400">Treatment:</span>
+                    <span class="font-medium text-slate-700">${b.service}</span>
+                  </div>
+                  <div class="flex items-center justify-between">
+                    <span class="text-slate-400">Phone:</span>
+                    <a href="tel:+91${phoneStr}" class="font-semibold text-darkAqua hover:underline">+91 ${phoneStr.substring(0,5)} ${phoneStr.substring(5)}</a>
+                  </div>
+                  ${b.email ? `
+                  <div class="flex items-center justify-between">
+                    <span class="text-slate-400">Email:</span>
+                    <a href="mailto:${b.email}" class="text-darkAqua truncate max-w-[150px] hover:underline">${b.email}</a>
+                  </div>` : ''}
+                </div>
+
+                ${b.message ? `
+                <div class="bg-slate-50 rounded-lg p-2.5 text-xs text-slate-500 italic mt-2 border border-slate-100">
+                  "${b.message}"
+                </div>` : ''}
+              </div>
+
+              <!-- Button actions -->
+              <div class="pt-4 flex flex-col gap-2">
+                <div class="flex items-center gap-2">
+                  <a href="https://wa.me/91${phoneStr}?text=${whatsappMessage}" target="_blank" rel="noopener,noreferrer" class="action-btn-secondary min-h-10 text-xs py-2 w-full justify-center gap-1.5 hover:bg-emerald-50 hover:border-emerald-200 hover:text-emerald-700 transition">
+                    <svg class="h-4 w-4 fill-current text-emerald-600" viewBox="0 0 24 24"><path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347z"/><path d="M12 0C5.373 0 0 5.373 0 12c0 2.123.554 4.116 1.527 5.847L.057 23.07a.75.75 0 00.924.924l5.223-1.47A11.945 11.945 0 0012 24c6.627 0 12-5.373 12-12S18.627 0 12 0zm0 22c-1.9 0-3.7-.49-5.264-1.352l-.376-.21-3.902 1.097 1.098-3.9-.21-.378A9.944 9.944 0 012 12C2 6.477 6.477 2 12 2s10 4.477 10 10-4.477 10-10 10z"/></svg>
+                    WhatsApp Chat
+                  </a>
+                  <a href="tel:+91${phoneStr}" class="action-btn-secondary min-h-10 text-xs py-2 w-full justify-center gap-1.5 hover:bg-slate-50 transition">
+                    <svg class="h-4 w-4 text-slate-500" fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M3 5a2 2 0 012-2h3.28a1 1 0 01.948.684l1.498 4.493a1 1 0 01-.502 1.21l-2.257 1.13a11.042 11.042 0 005.516 5.516l1.13-2.257a1 1 0 011.21-.502l4.493 1.498a1 1 0 01.684.949V19a2 2 0 01-2 2h-1C9.716 21 3 14.284 3 6V5z"/></svg>
+                    Call Client
+                  </a>
+                </div>
+                ${isActionable ? `
+                <div class="flex items-center gap-2">
+                  ${status !== 'confirmed' ? `
+                  <button class="action-btn-primary min-h-10 text-xs py-2 w-full bg-emerald-600 hover:bg-emerald-700 justify-center btn-confirm" data-id="${b.appointmentId}">
+                    Confirm
+                  </button>` : ''}
+                  <button class="action-btn-secondary min-h-10 text-xs py-2 w-full justify-center text-indigo-600 border-indigo-200 bg-indigo-50/20 hover:bg-indigo-50 btn-reschedule" data-id="${b.appointmentId}" data-date="${b.date}" data-time="${b.time}">
+                    Reschedule
+                  </button>
+                  <button class="action-btn-secondary min-h-10 text-xs py-2 px-3 text-red-600 border-red-200 bg-red-50/20 hover:bg-red-50 btn-cancel" data-id="${b.appointmentId}">
+                    Cancel
+                  </button>
+                </div>` : ''}
+              </div>
+            `;
+            
+            bookingsList.appendChild(card);
+          });
+          
+          bookingsList.classList.remove('hidden');
+
+          // Hook Button Listeners
+          document.querySelectorAll('.btn-confirm').forEach(btn => {
+            btn.addEventListener('click', async (e) => {
+              const id = e.target.dataset.id;
+              e.target.disabled = true;
+              e.target.textContent = 'Saving...';
+              const success = await updateBookingAPI(id, { status: 'Confirmed' });
+              if (success) fetchBookings();
+            });
+          });
+
+          document.querySelectorAll('.btn-cancel').forEach(btn => {
+            btn.addEventListener('click', async (e) => {
+              if (confirm("Are you sure you want to cancel this appointment?")) {
+                e.target.disabled = true;
+                e.target.textContent = '...';
+                const success = await updateBookingAPI(btn.dataset.id, { status: 'Cancelled' });
+                if (success) fetchBookings();
+              }
+            });
+          });
+
+          document.querySelectorAll('.btn-reschedule').forEach(btn => {
+            btn.addEventListener('click', (e) => {
+              const dataset = e.currentTarget.dataset;
+              rescheduleId.value = dataset.id;
+              rescheduleDate.value = dataset.date;
+              rescheduleTime.value = dataset.time;
+              rescheduleModal.classList.remove('hidden');
+            });
+          });
+        }
+      };
+
+      // Reschedule Modal Operations
+      closeModalBtn.addEventListener('click', () => rescheduleModal.classList.add('hidden'));
+      cancelRescheduleBtn.addEventListener('click', () => rescheduleModal.classList.add('hidden'));
+
+      rescheduleForm.addEventListener('submit', async (e) => {
+        e.preventDefault();
+        const id = rescheduleId.value;
+        const newDate = rescheduleDate.value;
+        const newTime = rescheduleTime.value;
+
+        rescheduleModal.classList.add('hidden');
+        loadingState.classList.remove('hidden');
+        bookingsList.classList.add('hidden');
+
+        const success = await updateBookingAPI(id, {
+          status: 'Rescheduled',
+          date: newDate,
+          time: newTime
+        });
+
+        if (success) {
+          fetchBookings();
+        } else {
+          loadingState.classList.add('hidden');
+          bookingsList.classList.remove('hidden');
+        }
+      });
+
+      // Filter change listeners
+      searchInput.addEventListener('input', applyFilters);
+      filterStatus.addEventListener('change', applyFilters);
+      filterDate.addEventListener('change', applyFilters);
+
+      // Check on startup
+      checkAccess();
+    </script>
+  </body>
+</html>

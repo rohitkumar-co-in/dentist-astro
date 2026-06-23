@@ -74,11 +74,11 @@ import Icon from './Icon.astro';
         <div class="grid gap-4 sm:grid-cols-2">
           <label class="block">
             <span class="mb-1.5 block text-sm font-medium text-slate-700">First name</span>
-            <input class="input-field" name="firstName" type="text" placeholder="e.g. Priya" required autocomplete="given-name" />
+            <input class="input-field" name="firstName" type="text" placeholder="e.g. Priya" required autocomplete="given-name" pattern="[A-Za-z]+" title="First name can only contain letters (no spaces, numbers, or special characters)" />
           </label>
           <label class="block">
             <span class="mb-1.5 block text-sm font-medium text-slate-700">Last name</span>
-            <input class="input-field" name="lastName" type="text" placeholder="e.g. Sharma" required autocomplete="family-name" />
+            <input class="input-field" name="lastName" type="text" placeholder="e.g. Sharma" required autocomplete="family-name" pattern="[A-Za-z]+" title="Last name can only contain letters (no spaces, numbers, or special characters)" />
           </label>
         </div>
 
@@ -86,7 +86,7 @@ import Icon from './Icon.astro';
         <div class="grid gap-4 sm:grid-cols-2">
           <label class="block">
             <span class="mb-1.5 block text-sm font-medium text-slate-700">WhatsApp number</span>
-            <input class="input-field" name="phone" type="tel" placeholder="98XXX XXXXX" required autocomplete="tel" />
+            <input class="input-field" name="phone" type="tel" placeholder="98XXX XXXXX" required autocomplete="tel" pattern="[0-9]{5} [0-9]{5}" title="Phone number must be exactly 10 digits (formatted as XXXXX XXXXX)" maxlength="11" />
           </label>
           <label class="block">
             <span class="mb-1.5 flex items-center gap-1.5 text-sm font-medium text-slate-700">
@@ -118,28 +118,28 @@ import Icon from './Icon.astro';
             <span class="mb-1.5 block text-sm font-medium text-slate-700">Preferred time slot</span>
             <select class="input-field" name="appointmentTime" required>
               <option value="">Select a time slot…</option>
-              <option value="09:30 AM">09:30 AM</option>
-              <option value="10:00 AM">10:00 AM</option>
-              <option value="10:30 AM">10:30 AM</option>
-              <option value="11:00 AM">11:00 AM</option>
-              <option value="11:30 AM">11:30 AM</option>
-              <option value="12:00 PM">12:00 PM</option>
-              <option value="12:30 PM">12:30 PM</option>
-              <option value="01:00 PM">01:00 PM</option>
-              <option value="01:30 PM">01:30 PM</option>
-              <option value="02:00 PM">02:00 PM</option>
-              <option value="02:30 PM">02:30 PM</option>
-              <option value="03:00 PM">03:00 PM</option>
-              <option value="03:30 PM">03:30 PM</option>
-              <option value="04:00 PM">04:00 PM</option>
-              <option value="04:30 PM">04:30 PM</option>
-              <option value="05:00 PM">05:00 PM</option>
-              <option value="05:30 PM">05:30 PM</option>
-              <option value="06:00 PM">06:00 PM</option>
-              <option value="06:30 PM">06:30 PM</option>
-              <option value="07:00 PM">07:00 PM</option>
-              <option value="07:30 PM">07:30 PM</option>
-              <option value="08:00 PM">08:00 PM</option>
+              <option value="09:30">09:30 AM</option>
+              <option value="10:00">10:00 AM</option>
+              <option value="10:30">10:30 AM</option>
+              <option value="11:00">11:00 AM</option>
+              <option value="11:30">11:30 AM</option>
+              <option value="12:00">12:00 PM</option>
+              <option value="12:30">12:30 PM</option>
+              <option value="13:00">01:00 PM</option>
+              <option value="13:30">01:30 PM</option>
+              <option value="14:00">02:00 PM</option>
+              <option value="14:30">02:30 PM</option>
+              <option value="15:00">03:00 PM</option>
+              <option value="15:30">03:30 PM</option>
+              <option value="16:00">04:00 PM</option>
+              <option value="16:30">04:30 PM</option>
+              <option value="17:00">05:00 PM</option>
+              <option value="17:30">05:30 PM</option>
+              <option value="18:00">06:00 PM</option>
+              <option value="18:30">06:30 PM</option>
+              <option value="19:00">07:00 PM</option>
+              <option value="19:30">07:30 PM</option>
+              <option value="20:00">08:00 PM</option>
             </select>
             <p class="mt-1 text-xs text-slate-400">Clinic hours: 9:30 AM – 8:30 PM</p>
           </label>
@@ -271,12 +271,22 @@ import Icon from './Icon.astro';
       return `${year}-${month}-${day}`;
     };
 
+    const getIndianTimeString = () => {
+      const now = new Date();
+      const utc = now.getTime() + (now.getTimezoneOffset() * 60000);
+      const ist = new Date(utc + (3600000 * 5.5));
+      const hours = String(ist.getHours()).padStart(2, '0');
+      const minutes = String(ist.getMinutes()).padStart(2, '0');
+      return `${hours}:${minutes}`;
+    };
+
     const dateInput = document.querySelector('input[name="appointmentDate"]');
     const timeSelect = document.querySelector('select[name="appointmentTime"]');
+    const originalOptionTexts = timeSelect ? Array.from(timeSelect.options).map(opt => opt.textContent) : [];
 
     // Fetch and update unavailable slots from the Google Sheet
     const updateAvailableSlots = async (selectedDate) => {
-      if (!googleSheetsScriptUrl || !selectedDate) return;
+      if (!selectedDate || !timeSelect) return;
 
       timeSelect.disabled = true;
       const firstOption = timeSelect.options[0];
@@ -284,33 +294,41 @@ import Icon from './Icon.astro';
       firstOption.textContent = "Checking availability...";
       timeSelect.value = "";
 
+      let bookedSlots = [];
       try {
-        const response = await fetch(`${googleSheetsScriptUrl}?date=${selectedDate}`);
-        if (!response.ok) throw new Error('Failed to fetch available slots');
-        const data = await response.json();
-        const bookedSlots = data.bookedSlots || [];
-
-        firstOption.textContent = originalText;
-
-        for (let i = 1; i < timeSelect.options.length; i++) {
-          const option = timeSelect.options[i];
-          if (bookedSlots.includes(option.value)) {
-            option.disabled = true;
-            option.textContent = `${option.value} (Unavailable)`;
-          } else {
-            option.disabled = false;
-            option.textContent = option.value;
+        if (googleSheetsScriptUrl) {
+          const response = await fetch(`${googleSheetsScriptUrl}?date=${selectedDate}`);
+          if (response.ok) {
+            const data = await response.json();
+            bookedSlots = data.bookedSlots || [];
           }
         }
       } catch (err) {
-        console.warn("Could not retrieve availability, enabling all slots:", err);
+        console.warn("Could not retrieve availability from sheet:", err);
+      } finally {
         firstOption.textContent = originalText;
+        const todayIST = getIndianDateString();
+        const currentISTTime = getIndianTimeString();
+
         for (let i = 1; i < timeSelect.options.length; i++) {
           const option = timeSelect.options[i];
-          option.disabled = false;
-          option.textContent = option.value;
+          const originalText = originalOptionTexts[i] || option.textContent;
+          const slotTime = option.value;
+
+          const isBooked = bookedSlots.includes(slotTime);
+          const isPast = (selectedDate === todayIST && slotTime <= currentISTTime);
+
+          if (isBooked) {
+            option.disabled = true;
+            option.textContent = `${originalText} (Unavailable)`;
+          } else if (isPast) {
+            option.disabled = true;
+            option.textContent = `${originalText} (Passed)`;
+          } else {
+            option.disabled = false;
+            option.textContent = originalText;
+          }
         }
-      } finally {
         timeSelect.disabled = false;
       }
     };
@@ -328,6 +346,49 @@ import Icon from './Icon.astro';
       updateAvailableSlots(todayIST);
     }
 
+    // Input validation and formatting
+    const firstNameInput = document.querySelector('input[name="firstName"]');
+    const lastNameInput = document.querySelector('input[name="lastName"]');
+    const phoneInput = document.querySelector('input[name="phone"]');
+
+    if (firstNameInput) {
+      firstNameInput.addEventListener('input', (e) => {
+        e.target.value = e.target.value.replace(/[^A-Za-z]/g, '');
+      });
+    }
+
+    if (lastNameInput) {
+      lastNameInput.addEventListener('input', (e) => {
+        e.target.value = e.target.value.replace(/[^A-Za-z]/g, '');
+      });
+    }
+
+    if (phoneInput) {
+      phoneInput.addEventListener('input', (e) => {
+        let value = e.target.value;
+        let digits = value.replace(/\D/g, '');
+        
+        // Strip leading 91 or 0 if user enters/pastes number with prefix and it exceeds 10 digits
+        if (digits.length > 10 && (digits.startsWith('91') || digits.startsWith('0'))) {
+          if (digits.startsWith('91')) {
+            digits = digits.substring(2);
+          } else if (digits.startsWith('0')) {
+            digits = digits.substring(1);
+          }
+        }
+        
+        // Max 10 digits
+        digits = digits.substring(0, 10);
+        
+        // Format as XXXXX XXXXX
+        if (digits.length > 5) {
+          e.target.value = digits.substring(0, 5) + ' ' + digits.substring(5);
+        } else {
+          e.target.value = digits;
+        }
+      });
+    }
+
     const form = document.querySelector('[data-appointment-form]');
     const successMessage = document.querySelector('[data-form-success]');
 
@@ -338,7 +399,7 @@ import Icon from './Icon.astro';
         const formData = new FormData(form);
         const firstName = String(formData.get('firstName') || '').trim();
         const lastName = String(formData.get('lastName') || '').trim();
-        const phone = String(formData.get('phone') || '').trim();
+        const phone = String(formData.get('phone') || '').replace(/\s/g, '');
         const email = String(formData.get('email') || '').trim();
         const service = String(formData.get('service') || '').trim();
         const appointmentDate = String(formData.get('appointmentDate') || '').trim();
