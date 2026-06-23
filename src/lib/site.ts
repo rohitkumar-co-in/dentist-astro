@@ -27,6 +27,7 @@ export const clinic = {
   email: 'hello@aquasmile.example',
   address: '2nd Floor, Aqua Arcade, Link Road, Andheri West, Mumbai, Maharashtra 400053',
   googleMapsQuery: 'AquaSmile Dental Clinic Andheri West Mumbai',
+  googleSheetsScriptUrl: 'https://script.google.com/macros/s/AKfycbw06yEAewqv5gJbUoS3-Ao7Yg4WlYGBUGcOdsBHXtNKJBIHLh0qv9jzTpuc54wZy7WMyQ/exec', // Add Google Sheets Apps Script Web App URL here to save appointment data
 
   /** Instagram, Facebook profile URLs */
   instagramUrl: 'https://instagram.com',

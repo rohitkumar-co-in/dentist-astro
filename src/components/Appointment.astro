@@ -237,7 +237,7 @@ import Icon from './Icon.astro';
     </div>
   </div>
 
-  <script is:inline>
+  <script define:vars={{ whatsappNumber: clinic.whatsappNumber, googleSheetsScriptUrl: clinic.googleSheetsScriptUrl }}>
     const form = document.querySelector('[data-appointment-form]');
     const successMessage = document.querySelector('[data-form-success]');
 
@@ -265,12 +265,54 @@ import Icon from './Icon.astro';
           message ? `Additional info: ${message}` : null,
         ].filter(Boolean).join('\n'));
 
-        // No backend is used here; we confirm the form and then open a prefilled WhatsApp chat.
-        successMessage.classList.remove('hidden');
-        successMessage.textContent = 'Request prepared. Opening WhatsApp so the clinic receives your booking details right away.';
+        const submitBtn = form.querySelector('button[type="submit"]');
+        let originalBtnHTML = '';
+        if (submitBtn) {
+          originalBtnHTML = submitBtn.innerHTML;
+          submitBtn.disabled = true;
+          submitBtn.innerHTML = 'Saving...';
+        }
 
-        window.open(`https://wa.me/${clinic.whatsappNumber}?text=${whatsappText}`, '_blank', 'noopener,noreferrer');
-        form.reset();
+        const proceedToWhatsApp = () => {
+          successMessage.classList.remove('hidden');
+          successMessage.textContent = 'Request prepared. Opening WhatsApp so the clinic receives your booking details right away.';
+
+          window.open(`https://wa.me/${whatsappNumber}?text=${whatsappText}`, '_blank', 'noopener,noreferrer');
+          form.reset();
+
+          if (submitBtn) {
+            submitBtn.disabled = false;
+            submitBtn.innerHTML = originalBtnHTML;
+          }
+        };
+
+        if (googleSheetsScriptUrl) {
+          fetch(googleSheetsScriptUrl, {
+            method: 'POST',
+            mode: 'no-cors',
+            headers: {
+              'Content-Type': 'text/plain',
+            },
+            body: JSON.stringify({
+              firstName,
+              lastName,
+              phone,
+              email,
+              service,
+              appointmentDate,
+              appointmentTime,
+              message
+            })
+          })
+          .catch((err) => {
+            console.error('Error saving to Google Sheets:', err);
+          })
+          .finally(() => {
+            proceedToWhatsApp();
+          });
+        } else {
+          proceedToWhatsApp();
+        }
       });
     }
   </script>
