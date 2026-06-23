@@ -320,11 +320,24 @@ const clinicName = clinic.name;
         </div>
         <div class="space-y-4">
           <div>
-            <span class="text-xs font-semibold text-slate-400 uppercase tracking-wider block">Patient Details</span>
-            <div class="mt-1 flex flex-wrap gap-x-4 text-sm text-slate-700">
-              <div><span class="text-slate-400">Name:</span> <strong id="reminder-patient-name">-</strong></div>
-              <div><span class="text-slate-400">Phone:</span> <strong id="reminder-patient-phone">-</strong></div>
-              <div id="reminder-patient-email-container"><span class="text-slate-400">Email:</span> <strong id="reminder-patient-email">-</strong></div>
+            <span class="text-xs font-semibold text-slate-400 uppercase tracking-wider block mb-2">Patient Details</span>
+            <div class="border border-slate-100 rounded-lg overflow-hidden bg-slate-50">
+              <table class="w-full text-sm border-collapse text-left">
+                <tbody>
+                  <tr class="border-b border-slate-100">
+                    <td class="px-3 py-2 text-slate-400 font-medium w-20">Name</td>
+                    <td class="px-3 py-2 text-slate-700 font-bold" id="reminder-patient-name">-</td>
+                  </tr>
+                  <tr class="border-b border-slate-100">
+                    <td class="px-3 py-2 text-slate-400 font-medium">Phone</td>
+                    <td class="px-3 py-2 text-slate-700 font-semibold" id="reminder-patient-phone">-</td>
+                  </tr>
+                  <tr id="reminder-patient-email-container">
+                    <td class="px-3 py-2 text-slate-400 font-medium">Email</td>
+                    <td class="px-3 py-2 text-slate-700 font-semibold truncate max-w-[200px]" id="reminder-patient-email">-</td>
+                  </tr>
+                </tbody>
+              </table>
             </div>
           </div>
 
@@ -1006,7 +1019,7 @@ const clinicName = clinic.name;
               }
 
               // Prefill message template
-              const message = `Hi ${dataset.firstname}, this is a friendly reminder for your upcoming appointment at AquaSmile Clinic.\nScheduled Slot: ${date} at ${time} for ${service}.\nLooking forward to seeing you soon!`;
+              const message = `Hi ${dataset.firstname},\n\nThis is a friendly reminder for your upcoming appointment at AquaSmile Clinic.\n\n📅 Scheduled Slot: ${date} at ${time}\n🦷 Treatment: ${service}\n\nLooking forward to seeing you soon!`;
               reminderMessageText.value = message;
               
               // Store phone and email as data attributes on textarea
