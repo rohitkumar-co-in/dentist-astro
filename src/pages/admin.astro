@@ -203,70 +203,116 @@ const clinicName = clinic.name;
           </div>
         </div>
 
-        <!-- Control Center Card -->
-        <div class="card-elevated p-5 space-y-4">
-          <!-- Top Row: Search & Dropdowns -->
-          <div class="flex flex-col gap-4 md:flex-row md:items-center justify-between">
-            <!-- Search box -->
-            <div class="relative flex-1">
-              <span class="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none text-slate-400">
-                <svg class="h-5 w-5" fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"/></svg>
-              </span>
-              <input class="input-field pl-10 pr-10" type="text" id="search-input" placeholder="Search by name, phone, service, ID..." />
-              <button id="search-clear-btn" class="hidden absolute inset-y-0 right-0 pr-3 flex items-center text-slate-400 hover:text-slate-600 transition" title="Clear Search">
-                <svg class="h-5 w-5" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M6 18L18 6M6 6l12 12"/></svg>
-              </button>
+        <!-- Grid layout for filters & blocked dates side-by-side -->
+        <div class="grid grid-cols-1 lg:grid-cols-3 gap-6">
+          <!-- Control Center Card (2/3 width) -->
+          <div class="lg:col-span-2 card-elevated p-5 space-y-4">
+            <!-- Top Row: Search & Dropdowns -->
+            <div class="flex flex-col gap-4 md:flex-row md:items-center justify-between">
+              <!-- Search box -->
+              <div class="relative flex-1">
+                <span class="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none text-slate-400">
+                  <svg class="h-5 w-5" fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"/></svg>
+                </span>
+                <input class="input-field pl-10 pr-10" type="text" id="search-input" placeholder="Search by name, phone, service, ID..." />
+                <button id="search-clear-btn" class="hidden absolute inset-y-0 right-0 pr-3 flex items-center text-slate-400 hover:text-slate-600 transition" title="Clear Search">
+                  <svg class="h-5 w-5" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M6 18L18 6M6 6l12 12"/></svg>
+                </button>
+              </div>
+              <!-- Dropdowns -->
+              <div class="flex flex-wrap items-center gap-3">
+                <div class="w-40">
+                  <select class="input-field py-2" id="filter-status">
+                    <option value="ALL">All Statuses</option>
+                    <option value="Pending">Pending</option>
+                    <option value="Confirmed">Confirmed</option>
+                    <option value="Rescheduled">Rescheduled</option>
+                    <option value="Cancelled">Cancelled</option>
+                  </select>
+                </div>
+                <div class="w-44">
+                  <select class="input-field py-2" id="filter-date">
+                    <option value="ALL">All Dates</option>
+                    <option value="TODAY">Today</option>
+                    <option value="YESTERDAY">Yesterday</option>
+                    <option value="TOMORROW">Tomorrow</option>
+                    <option value="THIS_WEEK">This Week</option>
+                    <option value="LAST_WEEK">Last Week</option>
+                    <option value="THIS_MONTH">This Month</option>
+                    <option value="LAST_MONTH">Last Month</option>
+                    <option value="CUSTOM">Custom Range...</option>
+                  </select>
+                </div>
+                <!-- Custom Date Range Picker Container (hidden by default) -->
+                <div id="custom-date-container" class="hidden flex items-center gap-2">
+                  <input type="date" id="custom-start-date" class="input-field py-2 text-xs w-32 animate-none" />
+                  <span class="text-xs text-slate-400 font-medium">to</span>
+                  <input type="date" id="custom-end-date" class="input-field py-2 text-xs w-32 animate-none" />
+                </div>
+              </div>
             </div>
-            <!-- Dropdowns -->
-            <div class="flex flex-wrap items-center gap-3">
-              <div class="w-40">
-                <select class="input-field py-2" id="filter-status">
-                  <option value="ALL">All Statuses</option>
-                  <option value="Pending">Pending</option>
-                  <option value="Confirmed">Confirmed</option>
-                  <option value="Rescheduled">Rescheduled</option>
-                  <option value="Cancelled">Cancelled</option>
-                </select>
+
+            <!-- Divider -->
+            <div class="w-full border-t border-[var(--border)] opacity-60"></div>
+
+            <!-- Bottom Row: Quick Filter Chips -->
+            <div class="grid grid-cols-1 lg:grid-cols-2 gap-4 pt-1">
+              <!-- Quick Date Filters -->
+              <div class="space-y-2">
+                <span class="text-[10px] font-bold text-slate-400 uppercase tracking-widest block">Quick Date Presets</span>
+                <div id="quick-date-chips" class="flex flex-wrap gap-2 overflow-x-auto pb-1 scrollbar-thin">
+                  <!-- Generated dynamically in script -->
+                </div>
               </div>
-              <div class="w-44">
-                <select class="input-field py-2" id="filter-date">
-                  <option value="ALL">All Dates</option>
-                  <option value="TODAY">Today</option>
-                  <option value="YESTERDAY">Yesterday</option>
-                  <option value="TOMORROW">Tomorrow</option>
-                  <option value="THIS_WEEK">This Week</option>
-                  <option value="LAST_WEEK">Last Week</option>
-                  <option value="THIS_MONTH">This Month</option>
-                  <option value="LAST_MONTH">Last Month</option>
-                  <option value="CUSTOM">Custom Range...</option>
-                </select>
-              </div>
-              <!-- Custom Date Range Picker Container (hidden by default) -->
-              <div id="custom-date-container" class="hidden flex items-center gap-2">
-                <input type="date" id="custom-start-date" class="input-field py-2 text-xs w-32 animate-none" />
-                <span class="text-xs text-slate-400 font-medium">to</span>
-                <input type="date" id="custom-end-date" class="input-field py-2 text-xs w-32 animate-none" />
+              <!-- Quick Status Filters -->
+              <div class="space-y-2">
+                <span class="text-[10px] font-bold text-slate-400 uppercase tracking-widest block">Quick Status Presets</span>
+                <div id="quick-status-chips" class="flex flex-wrap gap-2 overflow-x-auto pb-1 scrollbar-thin">
+                  <!-- Generated dynamically in script -->
+                </div>
               </div>
             </div>
           </div>
 
-          <!-- Divider -->
-          <div class="w-full border-t border-[var(--border)] opacity-60"></div>
-
-          <!-- Bottom Row: Quick Filter Chips -->
-          <div class="grid grid-cols-1 lg:grid-cols-2 gap-4 pt-1">
-            <!-- Quick Date Filters -->
-            <div class="space-y-2">
-              <span class="text-[10px] font-bold text-slate-400 uppercase tracking-widest block">Quick Date Presets</span>
-              <div id="quick-date-chips" class="flex flex-wrap gap-2 overflow-x-auto pb-1 scrollbar-thin">
-                <!-- Generated dynamically in script -->
+          <!-- Doctor Leave / Out-of-Office Card (1/3 width) -->
+          <div class="card-elevated p-5 flex flex-col space-y-4 justify-between">
+            <div class="flex items-center justify-between border-b border-[var(--border)] pb-2">
+              <div class="flex items-center gap-2">
+                <span class="flex h-7 w-7 items-center justify-center rounded-full bg-rose-50 text-rose-600">
+                  <svg class="h-4 w-4" fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z"/></svg>
+                </span>
+                <h3 class="text-sm font-bold text-slate-800">Doctor Leave / Out of Office</h3>
               </div>
             </div>
-            <!-- Quick Status Filters -->
-            <div class="space-y-2">
-              <span class="text-[10px] font-bold text-slate-400 uppercase tracking-widest block">Quick Status Presets</span>
-              <div id="quick-status-chips" class="flex flex-wrap gap-2 overflow-x-auto pb-1 scrollbar-thin">
-                <!-- Generated dynamically in script -->
+
+            <!-- Block Dates Form -->
+            <form id="block-dates-form" class="space-y-3">
+              <div class="grid grid-cols-2 gap-3">
+                <label class="block">
+                  <span class="mb-1.5 block text-sm font-medium text-slate-700">Start Date</span>
+                  <input class="input-field animate-none" type="date" id="block-start-date" required />
+                </label>
+                <label class="block">
+                  <span class="mb-1.5 block text-sm font-medium text-slate-700">End Date</span>
+                  <input class="input-field animate-none" type="date" id="block-end-date" required />
+                </label>
+              </div>
+              <label class="block">
+                <span class="mb-1.5 block text-sm font-medium text-slate-700">Reason / Note</span>
+                <input type="text" id="block-reason" placeholder="e.g. Leave, Conference" class="input-field animate-none" required />
+              </label>
+              <button type="submit" class="action-btn-primary min-h-11 w-full justify-center text-sm font-semibold">
+                Block Selected Dates
+              </button>
+            </form>
+
+            <div class="w-full border-t border-[var(--border)] opacity-60"></div>
+
+            <!-- Blocked Dates List -->
+            <div class="space-y-2 flex-1 flex flex-col min-h-[140px]">
+              <span class="text-[10px] font-bold text-slate-400 uppercase tracking-widest block">Currently Blocked Dates</span>
+              <div id="blocked-dates-list" class="flex flex-col gap-1.5 max-h-[160px] overflow-y-auto pr-1 flex-1 text-xs">
+                <p class="text-slate-400 italic text-center py-4">No dates currently blocked.</p>
               </div>
             </div>
           </div>
@@ -500,6 +546,7 @@ const clinicName = clinic.name;
     <script define:vars={{ supabaseUrl: clinic.supabaseUrl, supabaseAnonKey: clinic.supabaseAnonKey }}>
       let bookingsData = [];
       let filteredBookings = [];
+      let blockedDatesData = [];
 
       const loginContainer = document.getElementById('login-container');
       const dashboardContainer = document.getElementById('dashboard-container');
@@ -562,6 +609,13 @@ const clinicName = clinic.name;
       const addDate = document.getElementById('add-date');
       const addTime = document.getElementById('add-time');
       const addMessage = document.getElementById('add-message');
+
+      // Block Dates Elements
+      const blockDatesForm = document.getElementById('block-dates-form');
+      const blockStartDate = document.getElementById('block-start-date');
+      const blockEndDate = document.getElementById('block-end-date');
+      const blockReason = document.getElementById('block-reason');
+      const blockedDatesList = document.getElementById('blocked-dates-list');
 
       // Set default min date in Indian Standard Time (IST)
       const getIndianDateString = () => {
@@ -682,7 +736,20 @@ const clinicName = clinic.name;
         if (isLoggedIn) {
           loginContainer.classList.add('hidden');
           dashboardContainer.classList.remove('hidden');
+
+          // Prefill start and end date for block dates form in IST
+          const todayIST = getIndianDateString();
+          if (blockStartDate) {
+            blockStartDate.min = todayIST;
+            blockStartDate.value = todayIST;
+          }
+          if (blockEndDate) {
+            blockEndDate.min = todayIST;
+            blockEndDate.value = todayIST;
+          }
+
           fetchBookings();
+          fetchBlockedDates();
         } else {
           loginContainer.classList.remove('hidden');
           dashboardContainer.classList.add('hidden');
@@ -784,6 +851,156 @@ const clinicName = clinic.name;
           loadingState.classList.add('hidden');
         }
       };
+
+      // Blocked Dates Actions
+      const fetchBlockedDates = async () => {
+        if (!supabaseUrl || !supabaseAnonKey) return;
+        try {
+          const response = await fetch(`${supabaseUrl}/rest/v1/blocked_dates?order=blocked_date.asc`, {
+            headers: {
+              'apikey': supabaseAnonKey,
+              'Authorization': `Bearer ${supabaseAnonKey}`
+            }
+          });
+          if (response.ok) {
+            blockedDatesData = await response.json();
+            renderBlockedDates();
+          } else {
+            console.warn('Failed to fetch blocked dates from database (table may not exist yet):', response.status);
+            blockedDatesData = [];
+            renderBlockedDates();
+          }
+        } catch (err) {
+          console.warn('Could not retrieve blocked dates:', err);
+          blockedDatesData = [];
+          renderBlockedDates();
+        }
+      };
+
+      const renderBlockedDates = () => {
+        if (!blockedDatesList) return;
+        if (blockedDatesData.length === 0) {
+          blockedDatesList.innerHTML = `<p class="text-slate-400 italic text-center py-4">No dates currently blocked.</p>`;
+          return;
+        }
+
+        blockedDatesList.innerHTML = blockedDatesData.map(item => {
+          const parts = item.blocked_date.split('-');
+          const displayDate = parts.length === 3 ? `${parts[2]}/${parts[1]}/${parts[0]}` : item.blocked_date;
+          return `
+            <div class="flex items-center justify-between bg-slate-50 border border-slate-100 rounded-lg p-2 transition hover:bg-slate-100 animate-none">
+              <div class="space-y-0.5 min-w-0 flex-1 pr-2">
+                <span class="font-bold text-slate-800">${displayDate}</span>
+                <span class="text-slate-500 text-[10px] block font-medium truncate" title="${item.reason || ''}">${item.reason || 'Leave'}</span>
+              </div>
+              <button type="button" class="text-red-500 hover:text-red-700 transition btn-delete-blocked-date p-1 shrink-0" data-date="${item.blocked_date}" title="Remove Block">
+                <svg class="h-4 w-4" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"/></svg>
+              </button>
+            </div>
+          `;
+        }).join('');
+
+        // Bind delete click event
+        blockedDatesList.querySelectorAll('.btn-delete-blocked-date').forEach(btn => {
+          btn.addEventListener('click', async () => {
+            const dateVal = btn.getAttribute('data-date');
+            if (confirm(`Are you sure you want to unblock appointments for ${dateVal}?`)) {
+              btn.disabled = true;
+              const success = await deleteBlockedDateAPI(dateVal);
+              if (success) {
+                await fetchBlockedDates();
+              } else {
+                btn.disabled = false;
+              }
+            }
+          });
+        });
+      };
+
+      const deleteBlockedDateAPI = async (dateVal) => {
+        if (!supabaseUrl || !supabaseAnonKey) return false;
+        try {
+          const response = await fetch(`${supabaseUrl}/rest/v1/blocked_dates?blocked_date=eq.${dateVal}`, {
+            method: 'DELETE',
+            headers: {
+              'apikey': supabaseAnonKey,
+              'Authorization': `Bearer ${supabaseAnonKey}`
+            }
+          });
+          return response.ok;
+        } catch (err) {
+          console.error('Error deleting blocked date:', err);
+          return false;
+        }
+      };
+
+      if (blockDatesForm) {
+        blockDatesForm.addEventListener('submit', async (e) => {
+          e.preventDefault();
+          const start = blockStartDate.value;
+          const end = blockEndDate.value;
+          const reason = blockReason.value.trim();
+
+          if (!start || !end) return;
+          if (start > end) {
+            alert('Start Date must be before or equal to End Date.');
+            return;
+          }
+
+          const submitBtn = blockDatesForm.querySelector('button[type="submit"]');
+          const originalText = submitBtn.textContent;
+          submitBtn.disabled = true;
+          submitBtn.textContent = 'Blocking...';
+
+          // Generate all dates in the range (inclusive)
+          const dates = [];
+          let current = new Date(start);
+          const last = new Date(end);
+          while (current <= last) {
+            const y = current.getFullYear();
+            const m = String(current.getMonth() + 1).padStart(2, '0');
+            const d = String(current.getDate()).padStart(2, '0');
+            dates.push(`${y}-${m}-${d}`);
+            current.setDate(current.getDate() + 1);
+          }
+
+          const rows = dates.map(dateStr => ({
+            blocked_date: dateStr,
+            reason: reason || "Leave"
+          }));
+
+          try {
+            if (supabaseUrl && supabaseAnonKey) {
+              const response = await fetch(`${supabaseUrl}/rest/v1/blocked_dates`, {
+                method: 'POST',
+                headers: {
+                  'apikey': supabaseAnonKey,
+                  'Authorization': `Bearer ${supabaseAnonKey}`,
+                  'Content-Type': 'application/json',
+                  'Prefer': 'resolution=merge-duplicates'
+                },
+                body: JSON.stringify(rows)
+              });
+              if (response.ok) {
+                blockReason.value = '';
+                // reset values to today
+                const todayIST = getIndianDateString();
+                blockStartDate.value = todayIST;
+                blockEndDate.value = todayIST;
+                await fetchBlockedDates();
+              } else {
+                throw new Error('Supabase insertion failed');
+              }
+            }
+          } catch (err) {
+            console.error('Failed to block dates:', err);
+            alert(`Failed to block dates: ${err.message}`);
+          } finally {
+            submitBtn.disabled = false;
+            submitBtn.textContent = originalText;
+          }
+        });
+      }
 
       const updateBookingAPI = async (appointmentId, updates) => {
         if (!supabaseUrl || !supabaseAnonKey) return false;
