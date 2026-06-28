@@ -57,21 +57,32 @@ import Icon from './Icon.astro';
         </div>
       </div>
 
-      <!-- RIGHT: Visual card -->
-      <div class="relative" data-reveal>
+      <!-- RIGHT: Visual container with overlapping Doctor Portrait & Stats Card -->
+      <div class="relative flex flex-col sm:flex-row items-center gap-6 lg:gap-8 mt-8 lg:mt-0" data-reveal>
         <!-- Glow rings -->
         <div class="absolute -left-10 -top-10 h-40 w-40 rounded-full bg-aqua/20 blur-3xl" aria-hidden="true"></div>
         <div class="absolute -bottom-8 -right-8 h-48 w-48 rounded-full bg-darkAqua/15 blur-3xl" aria-hidden="true"></div>
 
-        <div class="hero-card">
+        <!-- Large Doctor Portrait -->
+        <div class="hero-doctor-showcase relative w-full sm:w-[280px] aspect-[4/5] rounded-[24px] overflow-hidden border border-white/40 shadow-xl shadow-aqua/10">
+          <img src="/dr-ayesha-khan.png" alt="Dr. Ayesha Khan" class="h-full w-full object-cover" />
+          <div class="absolute inset-0 bg-gradient-to-t from-slate-900/80 via-transparent to-transparent flex flex-col justify-end p-4 text-white">
+            <p class="text-xs font-semibold text-aqua tracking-wider uppercase mb-0.5">Head Dentist</p>
+            <h4 class="text-base font-bold leading-tight">{clinic.doctorName}</h4>
+            <p class="text-[10px] text-slate-300 leading-normal">{clinic.doctorQualifications}</p>
+          </div>
+        </div>
+
+        <!-- Stats Card (Floating/Overlapping) -->
+        <div class="hero-card w-full sm:w-[320px] sm:-ml-12 sm:mt-12">
           <!-- Header row -->
           <div class="hero-card-header">
             <div class="hero-card-icon">
               <Icon name="tooth" size={28} class="h-7 w-7" />
             </div>
             <div>
-              <p class="font-heading text-base font-semibold text-charcoal">{clinic.name}</p>
-              <p class="text-xs text-slate-500">{clinic.area}, {clinic.city}</p>
+              <p class="font-heading text-sm font-semibold text-charcoal">{clinic.name}</p>
+              <p class="text-[10px] text-slate-500">{clinic.area}, {clinic.city}</p>
             </div>
             <span class="hero-open-pill">● Open now</span>
           </div>
@@ -79,41 +90,35 @@ import Icon from './Icon.astro';
           <!-- Stats grid -->
           <div class="hero-stats-grid">
             <div class="hero-stat">
-              <span class="hero-stat-val">{clinic.googleRating}★</span>
-              <span class="hero-stat-key">Rating</span>
+              <span class="hero-stat-val text-lg">{clinic.googleRating}★</span>
+              <span class="hero-stat-key text-[9px]">Rating</span>
             </div>
             <div class="hero-stat">
-              <span class="hero-stat-val">{clinic.patientsServed.replace('+','').replace(',','') > '999' ? clinic.patientsServed.replace(',000+','k+') : clinic.patientsServed}</span>
-              <span class="hero-stat-key">Families</span>
+              <span class="hero-stat-val text-lg">{clinic.patientsServed.replace('+','').replace(',','') > '999' ? clinic.patientsServed.replace(',000+','k+') : clinic.patientsServed}</span>
+              <span class="hero-stat-key text-[9px]">Families</span>
             </div>
             <div class="hero-stat">
-              <span class="hero-stat-val">{clinic.yearsInPractice}yr</span>
-              <span class="hero-stat-key">Experience</span>
+              <span class="hero-stat-val text-lg">{clinic.yearsInPractice}yr</span>
+              <span class="hero-stat-key text-[9px]">Experience</span>
             </div>
             <div class="hero-stat">
-              <span class="hero-stat-val">{clinic.services.length}</span>
-              <span class="hero-stat-key">Services</span>
+              <span class="hero-stat-val text-lg">{clinic.services.length}</span>
+              <span class="hero-stat-key text-[9px]">Services</span>
             </div>
           </div>
 
           <!-- Services strip -->
           <div class="hero-services-strip">
             {['Checkup','Whitening','Implants','Braces'].map((s) => (
-              <span class="hero-service-tag">{s}</span>
+              <span class="hero-service-tag text-[10px] py-1 px-2.5">{s}</span>
             ))}
           </div>
 
-          <!-- Doctor row -->
-          <div class="hero-doctor-row">
-            <div class="hero-doctor-avatar">
-              <Icon name="user" size={24} class="h-6 w-6 opacity-80" />
-            </div>
-            <div class="flex-1">
-              <p class="text-sm font-semibold text-white">{clinic.doctorName}</p>
-              <p class="text-xs text-white/70">{clinic.doctorQualifications}</p>
-            </div>
-            <a href="#appointment" class="hero-book-btn">Book →</a>
-          </div>
+          <!-- Quick Action CTA -->
+          <a href="#appointment" class="action-btn-primary py-2 min-h-10 text-xs justify-center gap-1.5 w-full">
+            Book Appointment
+            <svg class="h-4 w-4" fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M14 5l7 7m0 0l-7 7m7-7H3"/></svg>
+          </a>
         </div>
       </div>
 
@@ -227,7 +232,7 @@ import Icon from './Icon.astro';
     box-shadow: 0 24px 60px rgba(0,119,182,0.12), 0 8px 24px rgba(43,45,66,0.06);
     padding: 24px;
     display: flex; flex-direction: column; gap: 20px;
-    position: relative; z-index: 1;
+    position: relative; z-index: 2;
     transition: transform 0.4s ease, box-shadow 0.4s ease;
   }
   .hero-card:hover {
@@ -273,23 +278,13 @@ import Icon from './Icon.astro';
     font-size: 0.75rem; font-weight: 600;
     border: 1px solid rgba(0,180,216,0.2);
   }
-  .hero-doctor-row {
-    display: flex; align-items: center; gap: 12px;
-    padding: 14px; border-radius: 14px;
-    background: linear-gradient(135deg, #0077B6, #00B4D8); color: white;
+  .hero-doctor-showcase {
+    position: relative;
+    z-index: 1;
+    transition: transform 0.4s ease, box-shadow 0.4s ease;
   }
-  .hero-doctor-avatar {
-    width: 42px; height: 42px; border-radius: 50%;
-    background: rgba(255,255,255,0.2);
-    display: flex; align-items: center; justify-content: center;
-    flex-shrink: 0;
+  .hero-doctor-showcase:hover {
+    transform: translateY(-4px);
+    box-shadow: 0 32px 72px rgba(0,119,182,0.16);
   }
-  .hero-book-btn {
-    padding: 6px 16px; border-radius: 9999px;
-    background: white; color: #0077B6;
-    font-size: 0.8125rem; font-weight: 700;
-    transition: transform 0.2s;
-    white-space: nowrap;
-  }
-  .hero-book-btn:hover { transform: translateX(3px); }
 </style>
