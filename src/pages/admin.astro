@@ -96,70 +96,178 @@ const clinicName = clinic.name;
         <!-- Metrics cards -->
         <div class="grid grid-cols-2 md:grid-cols-5 gap-4">
           <!-- Card Total -->
-          <div class="card-elevated p-4 flex flex-col justify-between min-h-24">
-            <span class="text-xs font-semibold text-slate-400 uppercase tracking-wider">Total Bookings</span>
+          <div class="card-elevated p-4 flex flex-col justify-between min-h-24 transition-all duration-300 hover:-translate-y-1 hover:shadow-md hover:border-slate-300">
+            <div class="flex items-center justify-between">
+              <span class="text-xs font-semibold text-slate-400 uppercase tracking-wider">Total Bookings</span>
+              <span class="text-slate-400">
+                <svg class="h-5 w-5 text-slate-500" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M19 11H5m14 0a2 2 0 012 2v6a2 2 0 01-2 2H5a2 2 0 01-2-2v-6a2 2 0 012-2m14 0V9a2 2 0 00-2-2M5 11V9a2 2 0 012-2m0 0V5a2 2 0 012-2h6a2 2 0 012 2v2M7 7h10"/></svg>
+              </span>
+            </div>
             <span class="text-3xl font-black text-slate-800 mt-2" id="metric-total">0</span>
           </div>
           <!-- Card Pending -->
-          <div class="card-elevated p-4 border-amber-200 bg-amber-50/30 flex flex-col justify-between min-h-24">
-            <span class="text-xs font-semibold text-amber-600 uppercase tracking-wider">Pending</span>
+          <div class="card-elevated p-4 border-amber-200 bg-amber-50/20 flex flex-col justify-between min-h-24 transition-all duration-300 hover:-translate-y-1 hover:shadow-md hover:shadow-amber-100/50 hover:border-amber-300">
+            <div class="flex items-center justify-between">
+              <span class="text-xs font-semibold text-amber-600 uppercase tracking-wider">Pending</span>
+              <span>
+                <svg class="h-5 w-5 text-amber-500" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M12 6v6h4.5m4.5 0a9 9 0 11-18 0 9 9 0 0118 0z"/></svg>
+              </span>
+            </div>
             <span class="text-3xl font-black text-amber-600 mt-2" id="metric-pending">0</span>
           </div>
           <!-- Card Confirmed -->
-          <div class="card-elevated p-4 border-emerald-200 bg-emerald-50/30 flex flex-col justify-between min-h-24">
-            <span class="text-xs font-semibold text-emerald-600 uppercase tracking-wider">Confirmed</span>
+          <div class="card-elevated p-4 border-emerald-200 bg-emerald-50/20 flex flex-col justify-between min-h-24 transition-all duration-300 hover:-translate-y-1 hover:shadow-md hover:shadow-emerald-100/50 hover:border-emerald-300">
+            <div class="flex items-center justify-between">
+              <span class="text-xs font-semibold text-emerald-600 uppercase tracking-wider">Confirmed</span>
+              <span>
+                <svg class="h-5 w-5 text-emerald-500" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"/></svg>
+              </span>
+            </div>
             <span class="text-3xl font-black text-emerald-600 mt-2" id="metric-confirmed">0</span>
           </div>
           <!-- Card Rescheduled -->
-          <div class="card-elevated p-4 border-indigo-200 bg-indigo-50/30 flex flex-col justify-between min-h-24">
-            <span class="text-xs font-semibold text-indigo-600 uppercase tracking-wider">Rescheduled</span>
+          <div class="card-elevated p-4 border-indigo-200 bg-indigo-50/20 flex flex-col justify-between min-h-24 transition-all duration-300 hover:-translate-y-1 hover:shadow-md hover:shadow-indigo-100/50 hover:border-indigo-300">
+            <div class="flex items-center justify-between">
+              <span class="text-xs font-semibold text-indigo-600 uppercase tracking-wider">Rescheduled</span>
+              <span>
+                <svg class="h-5 w-5 text-indigo-500" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z"/></svg>
+              </span>
+            </div>
             <span class="text-3xl font-black text-indigo-600 mt-2" id="metric-rescheduled">0</span>
           </div>
           <!-- Card Cancelled -->
-          <div class="card-elevated p-4 border-rose-200 bg-rose-50/30 flex flex-col justify-between min-h-24">
-            <span class="text-xs font-semibold text-rose-600 uppercase tracking-wider">Cancelled</span>
+          <div class="card-elevated p-4 border-rose-200 bg-rose-50/20 flex flex-col justify-between min-h-24 transition-all duration-300 hover:-translate-y-1 hover:shadow-md hover:shadow-rose-100/50 hover:border-rose-300">
+            <div class="flex items-center justify-between">
+              <span class="text-xs font-semibold text-rose-600 uppercase tracking-wider">Cancelled</span>
+              <span>
+                <svg class="h-5 w-5 text-rose-500" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M10 14l2-2m0 0l2-2m-2 2l-2-2m2 2l2 2m7-2a9 9 0 11-18 0 9 9 0 0118 0z"/></svg>
+              </span>
+            </div>
             <span class="text-3xl font-black text-rose-600 mt-2" id="metric-cancelled">0</span>
           </div>
         </div>
 
-        <!-- Search & Filter Controls -->
-        <div class="card-elevated p-4 flex flex-col gap-4 md:flex-row md:items-center justify-between">
-          <!-- Search box -->
-          <div class="relative flex-1">
-            <span class="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none text-slate-400">
-              <svg class="h-5 w-5" fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"/></svg>
-            </span>
-            <input class="input-field pl-10" type="text" id="search-input" placeholder="Search by name, phone, service, ID..." />
+        <!-- Clinic Insights Grid -->
+        <div class="grid grid-cols-1 md:grid-cols-3 gap-4" id="insights-container">
+          <!-- Stats Card 1: Clinical Efficiency -->
+          <div class="card-elevated p-4 flex flex-col justify-between space-y-3 transition-all duration-300 hover:-translate-y-0.5 hover:shadow-md">
+            <div class="flex items-center justify-between">
+              <span class="text-xs font-bold text-slate-400 uppercase tracking-wider">Clinical Efficiency</span>
+              <span class="flex h-7 w-7 items-center justify-center rounded-full bg-emerald-50 text-emerald-600">
+                <svg class="h-4 w-4" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M13 7h8m0 0v8m0-8l-8 8-4-4-6 6"/></svg>
+              </span>
+            </div>
+            <div>
+              <span class="text-2xl font-black text-slate-800" id="stat-efficiency">0%</span>
+              <p class="text-[10px] text-slate-400 mt-0.5">Ratio of Confirmed & Rescheduled slots</p>
+            </div>
+            <div class="w-full bg-slate-100 rounded-full h-1.5 overflow-hidden">
+              <div id="stat-efficiency-bar" class="bg-emerald-500 h-1.5 rounded-full transition-all duration-500" style="width: 0%"></div>
+            </div>
           </div>
-          <!-- Filters -->
-          <div class="flex flex-wrap items-center gap-3">
-            <div class="w-40">
-              <select class="input-field py-2" id="filter-status">
-                <option value="ALL">All Statuses</option>
-                <option value="Pending">Pending</option>
-                <option value="Confirmed">Confirmed</option>
-                <option value="Rescheduled">Rescheduled</option>
-                <option value="Cancelled">Cancelled</option>
-              </select>
+
+          <!-- Stats Card 2: Peak Service Demand -->
+          <div class="card-elevated p-4 flex flex-col justify-between space-y-3 transition-all duration-300 hover:-translate-y-0.5 hover:shadow-md">
+            <div class="flex items-center justify-between">
+              <span class="text-xs font-bold text-slate-400 uppercase tracking-wider">Top Treatment</span>
+              <span class="flex h-7 w-7 items-center justify-center rounded-full bg-indigo-50 text-indigo-600">
+                <svg class="h-4 w-4" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M9.663 17h4.673M12 3v1m6.364 1.636l-.707.707M21 12h-1M4 12H3m3.343-5.657l-.707-.707m2.828 9.9a5 5 0 117.072 0l-.548.547A3.374 3.374 0 0014 18.469V19a2 2 0 11-4 0v-.531c0-.895-.356-1.754-.988-2.386l-.548-.547z"/></svg>
+              </span>
             </div>
-            <div class="w-44">
-              <select class="input-field py-2" id="filter-date">
-                <option value="ALL">All Dates</option>
-                <option value="TODAY">Today</option>
-                <option value="YESTERDAY">Yesterday</option>
-                <option value="TOMORROW">Tomorrow</option>
-                <option value="THIS_WEEK">This Week</option>
-                <option value="LAST_WEEK">Last Week</option>
-                <option value="THIS_MONTH">This Month</option>
-                <option value="LAST_MONTH">Last Month</option>
-                <option value="CUSTOM">Custom Range...</option>
-              </select>
+            <div>
+              <span class="text-base font-extrabold text-slate-800 truncate block" id="stat-top-service">Loading...</span>
+              <p class="text-[10px] text-slate-400 mt-0.5" id="stat-top-service-sub">Most booked treatment</p>
             </div>
-            <!-- Custom Date Range Picker Container (hidden by default) -->
-            <div id="custom-date-container" class="hidden flex items-center gap-2">
-              <input type="date" id="custom-start-date" class="input-field py-2 text-xs w-32" />
-              <span class="text-xs text-slate-400 font-medium">to</span>
-              <input type="date" id="custom-end-date" class="input-field py-2 text-xs w-32" />
+            <div class="text-xs font-medium text-slate-500 flex items-center justify-between border-t border-slate-50 pt-2">
+              <span>Total Booked:</span>
+              <span id="stat-top-service-count" class="font-bold text-darkAqua">0</span>
+            </div>
+          </div>
+
+          <!-- Stats Card 3: Daily Slot Density -->
+          <div class="card-elevated p-4 flex flex-col justify-between space-y-3 transition-all duration-300 hover:-translate-y-0.5 hover:shadow-md">
+            <div class="flex items-center justify-between">
+              <span class="text-xs font-bold text-slate-400 uppercase tracking-wider">Schedule Density</span>
+              <span class="flex h-7 w-7 items-center justify-center rounded-full bg-sky-50 text-sky-600">
+                <svg class="h-4 w-4" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M12 6v6h4.5m4.5 0a9 9 0 11-18 0 9 9 0 0118 0z"/></svg>
+              </span>
+            </div>
+            <div>
+              <span class="text-2xl font-black text-slate-800" id="stat-today-density">0 Slots</span>
+              <p class="text-[10px] text-slate-400 mt-0.5">Booked for today</p>
+            </div>
+            <div class="flex items-center gap-1.5">
+              <span class="flex h-2 w-2 rounded-full bg-slate-400 animate-pulse" id="stat-today-status-dot"></span>
+              <span class="text-[10px] font-semibold text-slate-500" id="stat-today-status">Checking load...</span>
+            </div>
+          </div>
+        </div>
+
+        <!-- Control Center Card -->
+        <div class="card-elevated p-5 space-y-4">
+          <!-- Top Row: Search & Dropdowns -->
+          <div class="flex flex-col gap-4 md:flex-row md:items-center justify-between">
+            <!-- Search box -->
+            <div class="relative flex-1">
+              <span class="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none text-slate-400">
+                <svg class="h-5 w-5" fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"/></svg>
+              </span>
+              <input class="input-field pl-10 pr-10" type="text" id="search-input" placeholder="Search by name, phone, service, ID..." />
+              <button id="search-clear-btn" class="hidden absolute inset-y-0 right-0 pr-3 flex items-center text-slate-400 hover:text-slate-600 transition" title="Clear Search">
+                <svg class="h-5 w-5" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M6 18L18 6M6 6l12 12"/></svg>
+              </button>
+            </div>
+            <!-- Dropdowns -->
+            <div class="flex flex-wrap items-center gap-3">
+              <div class="w-40">
+                <select class="input-field py-2" id="filter-status">
+                  <option value="ALL">All Statuses</option>
+                  <option value="Pending">Pending</option>
+                  <option value="Confirmed">Confirmed</option>
+                  <option value="Rescheduled">Rescheduled</option>
+                  <option value="Cancelled">Cancelled</option>
+                </select>
+              </div>
+              <div class="w-44">
+                <select class="input-field py-2" id="filter-date">
+                  <option value="ALL">All Dates</option>
+                  <option value="TODAY">Today</option>
+                  <option value="YESTERDAY">Yesterday</option>
+                  <option value="TOMORROW">Tomorrow</option>
+                  <option value="THIS_WEEK">This Week</option>
+                  <option value="LAST_WEEK">Last Week</option>
+                  <option value="THIS_MONTH">This Month</option>
+                  <option value="LAST_MONTH">Last Month</option>
+                  <option value="CUSTOM">Custom Range...</option>
+                </select>
+              </div>
+              <!-- Custom Date Range Picker Container (hidden by default) -->
+              <div id="custom-date-container" class="hidden flex items-center gap-2">
+                <input type="date" id="custom-start-date" class="input-field py-2 text-xs w-32 animate-none" />
+                <span class="text-xs text-slate-400 font-medium">to</span>
+                <input type="date" id="custom-end-date" class="input-field py-2 text-xs w-32 animate-none" />
+              </div>
+            </div>
+          </div>
+
+          <!-- Divider -->
+          <div class="w-full border-t border-[var(--border)] opacity-60"></div>
+
+          <!-- Bottom Row: Quick Filter Chips -->
+          <div class="grid grid-cols-1 lg:grid-cols-2 gap-4 pt-1">
+            <!-- Quick Date Filters -->
+            <div class="space-y-2">
+              <span class="text-[10px] font-bold text-slate-400 uppercase tracking-widest block">Quick Date Presets</span>
+              <div id="quick-date-chips" class="flex flex-wrap gap-2 overflow-x-auto pb-1 scrollbar-thin">
+                <!-- Generated dynamically in script -->
+              </div>
+            </div>
+            <!-- Quick Status Filters -->
+            <div class="space-y-2">
+              <span class="text-[10px] font-bold text-slate-400 uppercase tracking-widest block">Quick Status Presets</span>
+              <div id="quick-status-chips" class="flex flex-wrap gap-2 overflow-x-auto pb-1 scrollbar-thin">
+                <!-- Generated dynamically in script -->
+              </div>
             </div>
           </div>
         </div>
@@ -405,6 +513,7 @@ const clinicName = clinic.name;
       const downloadCsvBtn = document.getElementById('download-csv-btn');
       
       const searchInput = document.getElementById('search-input');
+      const searchClearBtn = document.getElementById('search-clear-btn');
       const filterStatus = document.getElementById('filter-status');
       const filterDate = document.getElementById('filter-date');
       const customDateContainer = document.getElementById('custom-date-container');
@@ -729,7 +838,269 @@ const clinicName = clinic.name;
         document.getElementById('metric-rescheduled').textContent = rescheduled;
         document.getElementById('metric-cancelled').textContent = cancelled;
 
+        // Recalculate and update the Insights Widget
+        updateInsights(pending, confirmed, rescheduled, cancelled);
+
+        // Recalculate filter option counts and quick filter chips
+        updateFilterCounts(pending, confirmed, rescheduled, cancelled);
+
         applyFilters();
+      };
+
+      const updateInsights = (pending, confirmed, rescheduled, cancelled) => {
+        // Clinical Efficiency
+        const completedOrConfirmed = confirmed + rescheduled;
+        const totalExcludingCancelled = bookingsData.length - cancelled;
+        const efficiency = totalExcludingCancelled > 0 ? Math.round((completedOrConfirmed / totalExcludingCancelled) * 100) : 0;
+        
+        const statEfficiency = document.getElementById('stat-efficiency');
+        const statEfficiencyBar = document.getElementById('stat-efficiency-bar');
+        if (statEfficiency) statEfficiency.textContent = `${efficiency}%`;
+        if (statEfficiencyBar) statEfficiencyBar.style.width = `${efficiency}%`;
+
+        // Peak Service Demand
+        const serviceCounts = {};
+        bookingsData.forEach(b => {
+          if (b.service) {
+            serviceCounts[b.service] = (serviceCounts[b.service] || 0) + 1;
+          }
+        });
+        let topService = 'None';
+        let topCount = 0;
+        Object.keys(serviceCounts).forEach(s => {
+          if (serviceCounts[s] > topCount) {
+            topService = s;
+            topCount = serviceCounts[s];
+          }
+        });
+
+        const statTopService = document.getElementById('stat-top-service');
+        const statTopServiceCount = document.getElementById('stat-top-service-count');
+        if (statTopService) {
+          statTopService.textContent = topService;
+          statTopService.title = topService;
+        }
+        if (statTopServiceCount) statTopServiceCount.textContent = topCount;
+
+        // Daily Slot Density
+        const getISTDate = (offsetDays = 0) => {
+          const now = new Date();
+          const utc = now.getTime() + (now.getTimezoneOffset() * 60000);
+          const ist = new Date(utc + (3600000 * 5.5) + (offsetDays * 86400000));
+          return ist;
+        };
+
+        const formatISTDateString = (dateObj) => {
+          const year = dateObj.getFullYear();
+          const month = String(dateObj.getMonth() + 1).padStart(2, '0');
+          const day = String(dateObj.getDate()).padStart(2, '0');
+          return `${year}-${month}-${day}`;
+        };
+
+        const todayIST = formatISTDateString(getISTDate(0));
+        const todayBookings = bookingsData.filter(b => b.date === todayIST && b.status !== 'Cancelled').length;
+
+        const statTodayDensity = document.getElementById('stat-today-density');
+        const statTodayStatusDot = document.getElementById('stat-today-status-dot');
+        const statTodayStatus = document.getElementById('stat-today-status');
+
+        if (statTodayDensity) statTodayDensity.textContent = `${todayBookings} Slot${todayBookings !== 1 ? 's' : ''}`;
+
+        if (statTodayStatusDot && statTodayStatus) {
+          statTodayStatusDot.className = 'flex h-2 w-2 rounded-full animate-pulse';
+          if (todayBookings === 0) {
+            statTodayStatus.textContent = 'No slots booked';
+            statTodayStatusDot.classList.add('bg-slate-400');
+          } else if (todayBookings <= 3) {
+            statTodayStatus.textContent = 'Light schedule load';
+            statTodayStatusDot.classList.add('bg-emerald-500');
+          } else if (todayBookings <= 6) {
+            statTodayStatus.textContent = 'Optimal schedule load';
+            statTodayStatusDot.classList.add('bg-amber-500');
+          } else {
+            statTodayStatus.textContent = 'High schedule load (Busy)';
+            statTodayStatusDot.classList.add('bg-rose-500');
+          }
+        }
+      };
+
+      const updateFilterCounts = (pending, confirmed, rescheduled, cancelled) => {
+        const getISTDate = (offsetDays = 0) => {
+          const now = new Date();
+          const utc = now.getTime() + (now.getTimezoneOffset() * 60000);
+          const ist = new Date(utc + (3600000 * 5.5) + (offsetDays * 86400000));
+          return ist;
+        };
+
+        const formatISTDateString = (dateObj) => {
+          const year = dateObj.getFullYear();
+          const month = String(dateObj.getMonth() + 1).padStart(2, '0');
+          const day = String(dateObj.getDate()).padStart(2, '0');
+          return `${year}-${month}-${day}`;
+        };
+
+        const getISTMonthBoundaries = (offsetMonths = 0) => {
+          const todayIST = getISTDate();
+          const year = todayIST.getFullYear();
+          const month = todayIST.getMonth() + offsetMonths;
+          const start = new Date(year, month, 1);
+          const end = new Date(year, month + 1, 0);
+          return {
+            start: `${start.getFullYear()}-${String(start.getMonth() + 1).padStart(2, '0')}-01`,
+            end: `${end.getFullYear()}-${String(end.getMonth() + 1).padStart(2, '0')}-${String(end.getDate()).padStart(2, '0')}`
+          };
+        };
+
+        const todayIST = formatISTDateString(getISTDate(0));
+        const yesterdayIST = formatISTDateString(getISTDate(-1));
+        const tomorrowIST = formatISTDateString(getISTDate(1));
+
+        const todayISTDateObj = getISTDate(0);
+        const dayOfWeek = todayISTDateObj.getDay();
+        const distanceToMonday = dayOfWeek === 0 ? -6 : 1 - dayOfWeek;
+        const thisWeekStart = formatISTDateString(getISTDate(distanceToMonday));
+        const thisWeekEnd = formatISTDateString(getISTDate(distanceToMonday + 6));
+        const lastWeekStart = formatISTDateString(getISTDate(distanceToMonday - 7));
+        const lastWeekEnd = formatISTDateString(getISTDate(distanceToMonday - 1));
+
+        const thisMonthBoundaries = getISTMonthBoundaries(0);
+        const lastMonthBoundaries = getISTMonthBoundaries(-1);
+
+        let statusCounts = { ALL: bookingsData.length, Pending: pending, Confirmed: confirmed, Rescheduled: rescheduled, Cancelled: cancelled };
+        let dateCounts = {
+          ALL: bookingsData.length,
+          TODAY: 0,
+          YESTERDAY: 0,
+          TOMORROW: 0,
+          THIS_WEEK: 0,
+          LAST_WEEK: 0,
+          THIS_MONTH: 0,
+          LAST_MONTH: 0
+        };
+
+        bookingsData.forEach(b => {
+          const bDate = b.date || '';
+          if (bDate === todayIST) dateCounts.TODAY++;
+          else if (bDate === yesterdayIST) dateCounts.YESTERDAY++;
+          else if (bDate === tomorrowIST) dateCounts.TOMORROW++;
+
+          if (bDate >= thisWeekStart && bDate <= thisWeekEnd) dateCounts.THIS_WEEK++;
+          if (bDate >= lastWeekStart && bDate <= lastWeekEnd) dateCounts.LAST_WEEK++;
+          if (bDate >= thisMonthBoundaries.start && bDate <= thisMonthBoundaries.end) dateCounts.THIS_MONTH++;
+          if (bDate >= lastMonthBoundaries.start && bDate <= lastMonthBoundaries.end) dateCounts.LAST_MONTH++;
+        });
+
+        const statusMap = {
+          'ALL': `All Statuses (${statusCounts.ALL})`,
+          'Pending': `Pending (${statusCounts.Pending})`,
+          'Confirmed': `Confirmed (${statusCounts.Confirmed})`,
+          'Rescheduled': `Rescheduled (${statusCounts.Rescheduled})`,
+          'Cancelled': `Cancelled (${statusCounts.Cancelled})`
+        };
+
+        const dateMap = {
+          'ALL': `All Dates (${dateCounts.ALL})`,
+          'TODAY': `Today (${dateCounts.TODAY})`,
+          'YESTERDAY': `Yesterday (${dateCounts.YESTERDAY})`,
+          'TOMORROW': `Tomorrow (${dateCounts.TOMORROW})`,
+          'THIS_WEEK': `This Week (${dateCounts.THIS_WEEK})`,
+          'LAST_WEEK': `Last Week (${dateCounts.LAST_WEEK})`,
+          'THIS_MONTH': `This Month (${dateCounts.THIS_MONTH})`,
+          'LAST_MONTH': `Last Month (${dateCounts.LAST_MONTH})`,
+        };
+
+        Object.keys(statusMap).forEach(val => {
+          const opt = filterStatus.querySelector(`option[value="${val}"]`);
+          if (opt) opt.textContent = statusMap[val];
+        });
+
+        Object.keys(dateMap).forEach(val => {
+          const opt = filterDate.querySelector(`option[value="${val}"]`);
+          if (opt) opt.textContent = dateMap[val];
+        });
+
+        renderQuickFilterChips(dateCounts, statusCounts);
+      };
+
+      const renderQuickFilterChips = (dateCounts, statusCounts) => {
+        const quickDateChips = document.getElementById('quick-date-chips');
+        const quickStatusChips = document.getElementById('quick-status-chips');
+        if (!quickDateChips || !quickStatusChips) return;
+
+        const activeDate = filterDate.value;
+        const activeStatus = filterStatus.value;
+
+        const dateChipsData = [
+          { value: 'ALL', label: 'All Dates', count: dateCounts.ALL },
+          { value: 'TODAY', label: 'Today', count: dateCounts.TODAY },
+          { value: 'YESTERDAY', label: 'Yesterday', count: dateCounts.YESTERDAY },
+          { value: 'TOMORROW', label: 'Tomorrow', count: dateCounts.TOMORROW },
+          { value: 'THIS_WEEK', label: 'This Week', count: dateCounts.THIS_WEEK },
+          { value: 'LAST_WEEK', label: 'Last Week', count: dateCounts.LAST_WEEK },
+          { value: 'THIS_MONTH', label: 'This Month', count: dateCounts.THIS_MONTH },
+          { value: 'LAST_MONTH', label: 'Last Month', count: dateCounts.LAST_MONTH },
+        ];
+
+        const statusChipsData = [
+          { value: 'ALL', label: 'All Statuses', count: statusCounts.ALL },
+          { value: 'Pending', label: 'Pending', count: statusCounts.Pending, dot: 'bg-amber-500' },
+          { value: 'Confirmed', label: 'Confirmed', count: statusCounts.Confirmed, dot: 'bg-emerald-500' },
+          { value: 'Rescheduled', label: 'Rescheduled', count: statusCounts.Rescheduled, dot: 'bg-indigo-500' },
+          { value: 'Cancelled', label: 'Cancelled', count: statusCounts.Cancelled, dot: 'bg-rose-500' },
+        ];
+
+        quickDateChips.innerHTML = dateChipsData.map(chip => {
+          const isActive = chip.value === activeDate;
+          const activeClass = isActive
+            ? 'bg-darkAqua text-white border-darkAqua shadow-sm shadow-darkAqua/10'
+            : 'bg-white text-slate-600 border-slate-200 hover:bg-slate-50';
+          return `
+            <button type="button" class="btn-date-chip inline-flex items-center gap-1.5 px-3 py-1.5 text-xs font-semibold border rounded-full transition-all duration-200 ${activeClass}" data-value="${chip.value}">
+              <span>${chip.label}</span>
+              <span class="opacity-70">(${chip.count})</span>
+            </button>
+          `;
+        }).join('');
+
+        quickStatusChips.innerHTML = statusChipsData.map(chip => {
+          const isActive = chip.value === activeStatus;
+          const activeClass = isActive
+            ? 'bg-darkAqua text-white border-darkAqua shadow-sm shadow-darkAqua/10'
+            : 'bg-white text-slate-600 border-slate-200 hover:bg-slate-50';
+          const dotHtml = chip.dot ? `<span class="h-2 w-2 rounded-full ${chip.dot}"></span>` : '';
+          return `
+            <button type="button" class="btn-status-chip inline-flex items-center gap-1.5 px-3 py-1.5 text-xs font-semibold border rounded-full transition-all duration-200 ${activeClass}" data-value="${chip.value}">
+              ${dotHtml}
+              <span>${chip.label}</span>
+              <span class="opacity-70">(${chip.count})</span>
+            </button>
+          `;
+        }).join('');
+
+        quickDateChips.querySelectorAll('.btn-date-chip').forEach(btn => {
+          btn.addEventListener('click', () => {
+            const val = btn.dataset.value;
+            filterDate.value = val;
+            filterDate.dispatchEvent(new Event('change'));
+          });
+        });
+
+        quickStatusChips.querySelectorAll('.btn-status-chip').forEach(btn => {
+          btn.addEventListener('click', () => {
+            const val = btn.dataset.value;
+            filterStatus.value = val;
+            filterStatus.dispatchEvent(new Event('change'));
+          });
+        });
+      };
+
+      const highlightText = (text) => {
+        if (!text) return '';
+        const query = searchInput.value.toLowerCase().trim();
+        if (!query) return text;
+        const escapedQuery = query.replace(/[-\/\\^$*+?.()|[\]{}]/g, '\\$&');
+        const regex = new RegExp(`(${escapedQuery})`, 'gi');
+        return String(text).replace(regex, '<mark class="bg-yellow-200 text-slate-900 px-0.5 rounded">$1</mark>');
       };
 
       const format12Hour = (timeStr) => {
@@ -766,16 +1137,36 @@ const clinicName = clinic.name;
           : b.date;
 
         const time12 = format12Hour(b.time);
-
         const isActionable = status !== 'cancelled';
 
+        const patientName = `${b.firstName} ${b.lastName}`;
+        const highlightedName = highlightText(patientName);
+        const highlightedId = highlightText(b.appointmentId);
+        const highlightedService = highlightText(b.service);
+        const highlightedPhone = highlightText(`+91 ${phoneStr.substring(0,5)} ${phoneStr.substring(5)}`);
+        const highlightedEmail = b.email ? highlightText(b.email) : '';
+
+        // Initials Avatar
+        const initials = ((b.firstName || '').substring(0,1) + (b.lastName || '').substring(0,1)).toUpperCase();
+        const colors = [
+          'bg-cyan-100 text-cyan-700',
+          'bg-emerald-100 text-emerald-700',
+          'bg-indigo-100 text-indigo-700',
+          'bg-purple-100 text-purple-700',
+          'bg-pink-100 text-pink-700',
+          'bg-teal-100 text-teal-700',
+          'bg-amber-100 text-amber-700'
+        ];
+        const nameSum = (b.firstName + b.lastName).split('').reduce((sum, c) => sum + c.charCodeAt(0), 0);
+        const avatarColorClass = colors[nameSum % colors.length];
+
         return `
-          <div class="card-elevated p-5 flex flex-col justify-between space-y-4 relative overflow-hidden transition hover:shadow-md ${accentBorder}">
+          <div class="card-elevated p-5 flex flex-col justify-between space-y-4 relative overflow-hidden transition-all duration-300 hover:-translate-y-1 hover:shadow-md ${accentBorder}">
             <div class="space-y-3">
               <!-- ID & Status Badge -->
               <div class="flex items-center justify-between">
                 <span class="text-xs font-bold text-slate-500 font-mono tracking-tight bg-slate-100 px-2.5 py-1 rounded-md">
-                  ${b.appointmentId}
+                  ID: ${highlightedId}
                 </span>
                 <span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-semibold border ${statusColorClass}">
                   ${b.status || 'Pending'}
@@ -783,31 +1174,58 @@ const clinicName = clinic.name;
               </div>
 
               <!-- Patient Basic Info -->
-              <div>
-                <h4 class="text-lg font-bold text-slate-800 leading-tight">${b.firstName} ${b.lastName}</h4>
-                <p class="text-xs text-slate-400 mt-0.5">${new Date(b.timestamp).toLocaleString('en-IN')}</p>
+              <div class="flex items-center gap-3">
+                <span class="flex h-10 w-10 shrink-0 items-center justify-center rounded-full text-xs font-bold ${avatarColorClass}">
+                  ${initials}
+                </span>
+                <div>
+                  <h4 class="text-base font-bold text-slate-800 leading-tight">${highlightedName}</h4>
+                  <p class="text-[10px] text-slate-400 mt-0.5">Created: ${new Date(b.timestamp).toLocaleString('en-IN')}</p>
+                </div>
               </div>
 
-              <div class="w-full border-t border-[var(--border)] opacity-60"></div>
-
-              <!-- Appointment details -->
-              <div class="space-y-1.5 text-sm">
-                <div class="flex items-center justify-between">
-                  <span class="text-slate-400">Preferred Slot:</span>
-                  <span class="font-semibold text-slate-700">${displayDate} @ ${time12}</span>
+              <!-- Clinical Details Grid -->
+              <div class="grid grid-cols-1 gap-2 text-xs bg-slate-50/50 p-3 rounded-lg border border-slate-100/80">
+                <!-- Preferred Slot -->
+                <div class="flex items-start gap-2">
+                  <span class="mt-0.5 text-slate-400">
+                    <svg class="h-3.5 w-3.5" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z"/></svg>
+                  </span>
+                  <div>
+                    <span class="text-slate-400 block text-[9px] uppercase tracking-wider font-semibold">Scheduled Slot</span>
+                    <span class="font-semibold text-slate-800">${displayDate} · ${time12}</span>
+                  </div>
                 </div>
-                <div class="flex items-center justify-between">
-                  <span class="text-slate-400">Treatment:</span>
-                  <span class="font-medium text-slate-700">${b.service}</span>
+                <!-- Service -->
+                <div class="flex items-start gap-2">
+                  <span class="mt-0.5 text-slate-400">
+                    <svg class="h-3.5 w-3.5" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2"/></svg>
+                  </span>
+                  <div>
+                    <span class="text-slate-400 block text-[9px] uppercase tracking-wider font-semibold">Treatment / Service</span>
+                    <span class="font-medium text-slate-800">${highlightedService}</span>
+                  </div>
                 </div>
-                <div class="flex items-center justify-between">
-                  <span class="text-slate-400">Phone:</span>
-                  <a href="tel:+91${phoneStr}" class="font-semibold text-darkAqua hover:underline">+91 ${phoneStr.substring(0,5)} ${phoneStr.substring(5)}</a>
+                <!-- Phone -->
+                <div class="flex items-start gap-2">
+                  <span class="mt-0.5 text-slate-400">
+                    <svg class="h-3.5 w-3.5" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M3 5a2 2 0 012-2h3.28a1 1 0 01.948.684l1.498 4.493a1 1 0 01-.502 1.21l-2.257 1.13a11.042 11.042 0 005.516 5.516l1.13-2.257a1 1 0 011.21-.502l4.493 1.498a1 1 0 01.684.949V19a2 2 0 01-2 2h-1C9.716 21 3 14.284 3 6V5z"/></svg>
+                  </span>
+                  <div>
+                    <span class="text-slate-400 block text-[9px] uppercase tracking-wider font-semibold">Phone</span>
+                    <a href="tel:+91${phoneStr}" class="font-bold text-darkAqua hover:underline">${highlightedPhone}</a>
+                  </div>
                 </div>
+                <!-- Email -->
                 ${b.email ? `
-                <div class="flex items-center justify-between">
-                  <span class="text-slate-400">Email:</span>
-                  <a href="mailto:${b.email}" class="text-darkAqua truncate max-w-[150px] hover:underline">${b.email}</a>
+                <div class="flex items-start gap-2">
+                  <span class="mt-0.5 text-slate-400">
+                    <svg class="h-3.5 w-3.5" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M3 8l7.89 5.26a2 2 0 002.22 0L21 8M5 19h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z"/></svg>
+                  </span>
+                  <div>
+                    <span class="text-slate-400 block text-[9px] uppercase tracking-wider font-semibold">Email</span>
+                    <a href="mailto:${b.email}" class="text-darkAqua hover:underline truncate block max-w-[180px]" title="${b.email}">${highlightedEmail}</a>
+                  </div>
                 </div>` : ''}
               </div>
 
@@ -818,9 +1236,9 @@ const clinicName = clinic.name;
             </div>
 
             <!-- Button actions -->
-            <div class="pt-4 flex flex-col gap-2">
+            <div class="pt-2 flex flex-col gap-2">
               <div class="flex items-center gap-2 font-medium">
-                <button class="action-btn-secondary min-h-10 text-xs py-2 w-full justify-center gap-1.5 hover:bg-indigo-50 hover:border-indigo-200 hover:text-indigo-700 btn-trigger-reminder transition"
+                <button class="action-btn-secondary min-h-9 text-xs py-1.5 w-full justify-center gap-1.5 hover:bg-indigo-50 hover:border-indigo-200 hover:text-indigo-700 btn-trigger-reminder transition"
                   data-id="${b.appointmentId}"
                   data-firstname="${b.firstName}"
                   data-lastname="${b.lastName}"
@@ -829,24 +1247,24 @@ const clinicName = clinic.name;
                   data-date="${displayDate}"
                   data-time="${time12}"
                   data-service="${b.service}">
-                  <svg class="h-4 w-4 text-indigo-500" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M15 17h5l-1.405-1.405A2.032 2.032 0 0118 14.158V11a6.002 6.002 0 00-4-5.659V5a2 2 0 10-4 0v.341C7.67 6.165 6 8.388 6 11v3.159c0 .538-.214 1.055-.595 1.436L4 17h5m6 0v1a3 3 0 11-6 0v-1m6 0H9"/></svg>
+                  <svg class="h-3.5 w-3.5 text-indigo-500" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M15 17h5l-1.405-1.405A2.032 2.032 0 0118 14.158V11a6.002 6.002 0 00-4-5.659V5a2 2 0 10-4 0v.341C7.67 6.165 6 8.388 6 11v3.159c0 .538-.214 1.055-.595 1.436L4 17h5m6 0v1a3 3 0 11-6 0v-1m6 0H9"/></svg>
                   Remind Client
                 </button>
-                <a href="tel:+91${phoneStr}" class="action-btn-secondary min-h-10 text-xs py-2 px-4 justify-center gap-1.5 hover:bg-slate-50 transition" title="Call Client">
-                  <svg class="h-4 w-4 text-slate-500" fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M3 5a2 2 0 012-2h3.28a1 1 0 01.948.684l1.498 4.493a1 1 0 01-.502 1.21l-2.257 1.13a11.042 11.042 0 005.516 5.516l1.13-2.257a1 1 0 011.21-.502l4.493 1.498a1 1 0 01.684.949V19a2 2 0 01-2 2h-1C9.716 21 3 14.284 3 6V5z"/></svg>
+                <a href="tel:+91${phoneStr}" class="action-btn-secondary min-h-9 text-xs py-1.5 px-3 justify-center gap-1.5 hover:bg-slate-50 transition" title="Call Client">
+                  <svg class="h-3.5 w-3.5 text-slate-500" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M3 5a2 2 0 012-2h3.28a1 1 0 01.948.684l1.498 4.493a1 1 0 01-.502 1.21l-2.257 1.13a11.042 11.042 0 005.516 5.516l1.13-2.257a1 1 0 011.21-.502l4.493 1.498a1 1 0 01.684.949V19a2 2 0 01-2 2h-1C9.716 21 3 14.284 3 6V5z"/></svg>
                   Call
                 </a>
               </div>
               ${isActionable ? `
               <div class="flex items-center gap-2">
                 ${status !== 'confirmed' ? `
-                <button class="action-btn-primary min-h-10 text-xs py-2 w-full bg-emerald-600 hover:bg-emerald-700 justify-center btn-confirm" data-id="${b.appointmentId}">
+                <button class="action-btn-primary min-h-9 text-xs py-1.5 w-full bg-emerald-600 hover:bg-emerald-700 justify-center btn-confirm" data-id="${b.appointmentId}">
                   Confirm
                 </button>` : ''}
-                <button class="action-btn-secondary min-h-10 text-xs py-2 w-full justify-center text-indigo-600 border-indigo-200 bg-indigo-50/20 hover:bg-indigo-50 btn-reschedule" data-id="${b.appointmentId}" data-date="${b.date}" data-time="${b.time}">
+                <button class="action-btn-secondary min-h-9 text-xs py-1.5 w-full justify-center text-indigo-600 border-indigo-200 bg-indigo-50/20 hover:bg-indigo-50 btn-reschedule" data-id="${b.appointmentId}" data-date="${b.date}" data-time="${b.time}">
                   Reschedule
                 </button>
-                <button class="action-btn-secondary min-h-10 text-xs py-2 px-3 text-red-600 border-red-200 bg-red-50/20 hover:bg-red-50 btn-cancel" data-id="${b.appointmentId}">
+                <button class="action-btn-secondary min-h-9 text-xs py-1.5 px-2.5 text-red-600 border-red-200 bg-red-50/20 hover:bg-red-50 btn-cancel" data-id="${b.appointmentId}">
                   Cancel
                 </button>
               </div>` : ''}
@@ -892,6 +1310,8 @@ const clinicName = clinic.name;
 
         const todayISTDateObj = getISTDate(0);
         const todayISTStr = formatISTDateString(todayISTDateObj);
+        const todayIST = todayISTStr;
+        const tomorrowIST = formatISTDateString(getISTDate(1));
 
         if (dateVal === 'TODAY') {
           filterStartDate = todayISTStr;
@@ -1258,11 +1678,30 @@ const clinicName = clinic.name;
       }
 
       // Filter change listeners
-      searchInput.addEventListener('input', applyFilters);
+      searchInput.addEventListener('input', () => {
+        if (searchInput.value.trim() !== '') {
+          searchClearBtn.classList.remove('hidden');
+        } else {
+          searchClearBtn.classList.add('hidden');
+        }
+        applyFilters();
+      });
+
+      if (searchClearBtn) {
+        searchClearBtn.addEventListener('click', () => {
+          searchInput.value = '';
+          searchClearBtn.classList.add('hidden');
+          applyFilters();
+        });
+      }
+
       filterStatus.addEventListener('change', applyFilters);
       filterDate.addEventListener('change', () => {
         if (filterDate.value === 'CUSTOM') {
           customDateContainer.classList.remove('hidden');
+          const todayStr = getIndianDateString();
+          if (!customStartDate.value) customStartDate.value = todayStr;
+          if (!customEndDate.value) customEndDate.value = todayStr;
         } else {
           customDateContainer.classList.add('hidden');
           customStartDate.value = '';
